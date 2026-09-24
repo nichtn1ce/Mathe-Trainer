@@ -1,22 +1,4 @@
-<p align="center">
-  <img src="assets/banner.png" alt="Mathe Trainer" width="100%">
-</p>
-
-Ein mathematischer Übungsgenerator, der das gesamte Spektrum abdeckt: von einfachem Kopfrechnen bis zur Lagrange Optimierung. Jede Aufgabe entsteht beim Aufrufen neu, wird exakt berechnet und lässt sich auf Wunsch Schritt für Schritt nachvollziehen. Die gesamte Anwendung steckt in einer einzigen HTML Datei - ganz ohne Server, ohne Vorbereitung beim Erstellen und ohne Netzwerkanfragen. Einfach im Browser öffnen und direkt nutzen, selbst ohne Internetverbindung.
-
-→ **Live ausprobieren:** nichtn1ce.github.io/Mathe-Trainer/
-
----
-
-## Screenshots
-
-| Aufgabe mit Graph | Stochastik im Hellmodus |
-|:--:|:--:|
-| <img src="assets/screenshot-dark.png" alt="Extremstellen einer Funktion"> | <img src="assets/screenshot-light.png" alt="Bedingte Wahrscheinlichkeit mit Vierfeldertafel"> |
-
-<img src="assets/loesungsweg.png" alt="Lösungsweg Schritt für Schritt">
-
-<img src="assets/hoehenlinien.png" alt="Höhenlinien mit Budgetgerade und Optimum">
+Ein mathematischer Übungsgenerator, der das gesamte Spektrum abdeckt: von einfachem Kopfrechnen bis zur Lagrange Optimierung. Jede Aufgabe entsteht beim Aufrufen neu, wird exakt berechnet und lässt sich auf Wunsch Schritt für Schritt nachvollziehen.
 
 ## Themen
 
