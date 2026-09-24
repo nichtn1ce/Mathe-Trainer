@@ -43,8 +43,8 @@
   --rp:14px;
   --ui:"Montserrat",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --math:"Cambria Math","Latin Modern Math",Cambria,"Times New Roman",Georgia,serif;
-  --e:cubic-bezier(.2,.7,.2,1);
-  --t1:120ms; --t2:210ms; --t3:340ms;
+  --e:cubic-bezier(.33,.72,.26,1);
+  --t1:130ms; --t2:220ms; --t3:320ms;
   --hdrbg:#12232f;               /* Kopfzeile im Ton der Leiste — Rahmen um den Inhalt */
   --hdr:60px; --rail:60px; --tb:74px; --pad:18px;
   /* Farbe der Schwierigkeitsstufe — wird je Stufe gesetzt, von Gruen nach Rot */
@@ -120,45 +120,43 @@ input{font:inherit;color:inherit}
 ::-webkit-scrollbar-track{background:transparent}
 :focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
-/* ============ BEWEGUNG ============ */
-@keyframes riseIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
-@keyframes popIn{from{opacity:0;transform:translateY(-6px) scale(.985)}to{opacity:1;transform:none}}
+/* ============ BEWEGUNG ============
+   Eine einzige Bewegung fuer alles, was neu erscheint: es waechst aus seiner
+   eigenen Mitte heraus und blendet dabei auf. Keine Seitwaerts-Rutscher mehr —
+   die liessen den Wechsel je nach Richtung anders aussehen, obwohl immer
+   dasselbe passiert. Gestaffelt wird nur noch knapp, damit der Aufbau als eine
+   Bewegung gelesen wird und nicht als Kette von Einzelteilen. */
+@keyframes popCenter{from{opacity:0;transform:scale(.965)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
 @keyframes okPulse{0%{box-shadow:0 0 0 0 rgba(34,221,110,.35)}70%{box-shadow:0 0 0 8px rgba(34,221,110,0)}100%{box-shadow:0 0 0 0 rgba(34,221,110,0)}}
+/* Beim Fehlversuch bleibt die waagerechte Bewegung — ein Kopfschuetteln sagt
+   „nein", und genau das ist hier gemeint. */
 @keyframes nudge{12%,88%{transform:translateX(-2px)}34%,66%{transform:translateX(3px)}50%{transform:translateX(-3px)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.anim-task #stage{animation:riseIn var(--t3) var(--e) both}
-.anim-task .metastrip{animation:fadeUp var(--t3) var(--e) both;animation-delay:60ms}
-/* Stufenwechsel bekommt eine eigene Bewegung: die Aufgabe schiebt seitlich herein,
-   Stufenanzeige und Regler quittieren den Sprung. */
-@keyframes slideFromR{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
-@keyframes slideFromL{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
-@keyframes lvlPop{0%{transform:scale(1)}38%{transform:scale(1.42)}100%{transform:scale(1)}}
 @keyframes knobPop{0%{transform:translate(-50%,-50%) scale(1)}38%{transform:translate(-50%,-50%) scale(1.3)}
   100%{transform:translate(-50%,-50%) scale(1)}}
-.ztrack.hit .knob{animation:knobPop 380ms var(--e)}
+.ztrack.hit .knob{animation:knobPop 360ms var(--e)}
 @keyframes valPop{0%{transform:scale(1)}40%{transform:scale(1.16)}100%{transform:scale(1)}}
-@keyframes lvlGlow{0%{box-shadow:0 0 0 0 var(--lvlsoft)}70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
-@keyframes trackSweep{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
-/* Themenwechsel: die ganze Karte baut sich gestaffelt auf */
-@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.993)}to{opacity:1;transform:none}}
-@keyframes pillIn{from{opacity:0;transform:translateY(-9px) scale(.96)}to{opacity:1;transform:none}}
-@keyframes swipeIn{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
-.anim-topic{animation:cardIn 420ms var(--e) both}
-.anim-topic #stage{animation:swipeIn 460ms var(--e) both;animation-delay:70ms}
-.anim-topic .metastrip{animation:fadeUp 420ms var(--e) both;animation-delay:130ms}
-.anim-topic .csec:nth-of-type(1){animation:fadeUp 420ms var(--e) both;animation-delay:190ms}
-.anim-topic .csec:nth-of-type(2){animation:fadeUp 420ms var(--e) both;animation-delay:240ms}
-.anim-topic .pfoot{animation:fadeUp 420ms var(--e) both;animation-delay:290ms}
-.tabsin .tab{animation:pillIn 340ms var(--e) both}
-.tabsin .tabind{animation:pillIn 340ms var(--e) both}
-.anim-up #stage{animation:slideFromR var(--t3) var(--e) both}
-.anim-down #stage{animation:slideFromL var(--t3) var(--e) both}
-.anim-lvl #lvlVal{display:inline-block;animation:valPop 380ms var(--e)}
-.inp.ok{animation:okPulse 640ms var(--e)}
-.inp.bad{animation:nudge 380ms var(--e)}
-.step{animation:fadeUp var(--t2) var(--e) both}
+/* Jede Flaeche, die auftaucht, benutzt dieselbe Kurve und dieselbe Richtung. */
+.anim-task #stage{animation:popCenter 300ms var(--e) both}
+.anim-task .metastrip{animation:popCenter 300ms var(--e) both;animation-delay:50ms}
+.anim-topic{animation:popCenter 320ms var(--e) both}
+.anim-topic #stage{animation:popCenter 300ms var(--e) both;animation-delay:70ms}
+.anim-topic .metastrip{animation:popCenter 300ms var(--e) both;animation-delay:110ms}
+.anim-topic .csec:nth-of-type(1){animation:popCenter 300ms var(--e) both;animation-delay:145ms}
+.anim-topic .csec:nth-of-type(2){animation:popCenter 300ms var(--e) both;animation-delay:175ms}
+.anim-topic .pfoot{animation:popCenter 300ms var(--e) both;animation-delay:205ms}
+.tabsin .tab{animation:popCenter 280ms var(--e) both}
+.tabsin .tabind{animation:popCenter 280ms var(--e) both}
+/* Stufenwechsel: dieselbe Bewegung wie sonst — die Richtung traegt der Wert
+   selbst, der kurz aufspringt. Ein seitliches Hereinschieben haette nur
+   vorgetaeuscht, dass etwas anderes passiert. */
+.anim-up #stage,.anim-down #stage{animation:popCenter 300ms var(--e) both}
+.anim-lvl #lvlVal{display:inline-block;animation:valPop 360ms var(--e)}
+.inp.ok{animation:okPulse 620ms var(--e)}
+.inp.bad{animation:nudge 360ms var(--e)}
+.step,.fml{animation:popCenter 250ms var(--e) both}
 .key:active,.btn:active{transform:scale(.97)}
-.tab,.railbtn,.btn,.key,.seg button{transition:background var(--t1) var(--e),color var(--t1) var(--e),transform var(--t1) var(--e)}
+.tab,.railbtn,.btn,.key,.seg button{transition:background var(--t1) var(--e),color var(--t1) var(--e),transform 90ms var(--e)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* ---- Wechsel zwischen Hell und Dunkel ----
@@ -175,16 +173,16 @@ input{font:inherit;color:inherit}
    durch die Leiste, und das Zeichen davor wird gezeichnet statt eingeblendet. */
 .fb{position:relative;overflow:hidden}
 .fb:before{content:'';position:absolute;inset:0;pointer-events:none;
-  transform-origin:left center;transform:scaleX(0)}
-.fb.good:before{background:var(--greens);animation:fbWipe 460ms var(--e) forwards}
-.fb.bad:before{background:var(--reds);animation:fbWipe 460ms var(--e) forwards}
-@keyframes fbWipe{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  transform-origin:center;transform:scaleX(0)}
+.fb.good:before{background:var(--greens);animation:fbWipe 420ms var(--e) forwards}
+.fb.bad:before{background:var(--reds);animation:fbWipe 420ms var(--e) forwards}
+@keyframes fbWipe{from{transform:scaleX(.12)}to{transform:scaleX(1)}}
 .fb .msg,.fb .tries,.fb .fbic{position:relative;z-index:1}
 .fbic{width:19px;height:19px;flex:0 0 19px;margin-right:9px;overflow:visible}
 .fbic path{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;
   stroke-dasharray:30;stroke-dashoffset:30;animation:draw 420ms var(--e) 90ms forwards}
 @keyframes draw{to{stroke-dashoffset:0}}
-.fb .tries{animation:chipPop 380ms var(--e) 140ms both}
+.fb .tries{animation:chipPop 360ms var(--e) 140ms both}
 @keyframes chipPop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
 /* Der Rahmen des Feldes zieht einmal nach — ein Ring, kein Blinken. */
 @keyframes themeSpin{from{transform:rotate(-140deg) scale(.4);opacity:0}to{transform:none;opacity:1}}
@@ -290,6 +288,16 @@ input{font:inherit;color:inherit}
 
 /* Menükarte */
 .railcard{background:var(--railcard);border-radius:var(--rp);margin:0 8px;padding:6px}
+/* Beim Scrollen laeuft die Menuekarte unter den oberen Rand der Leiste. Ohne
+   Hilfe waere die Schnittkante dort eckig. Dieser mitlaufende Streifen malt die
+   beiden Eckzwickel in Leistenfarbe nach, sodass die Rundung erhalten bleibt —
+   dasselbe Mittel wie .topround auf der Seite. */
+.railround{position:fixed;left:8px;width:238px;top:var(--hdr);height:var(--rp);
+  z-index:6;pointer-events:none;opacity:0;transition:opacity var(--t1) var(--e);
+  background:
+    radial-gradient(circle var(--rp) at var(--rp) var(--rp),transparent calc(var(--rp) - .5px),var(--dark) var(--rp)) left top/var(--rp) var(--rp) no-repeat,
+    radial-gradient(circle var(--rp) at 0 var(--rp),transparent calc(var(--rp) - .5px),var(--dark) var(--rp)) right top/var(--rp) var(--rp) no-repeat}
+.rail.open .railround{opacity:1}
 .rail:not(.open) .railcard{background:transparent;padding:0;margin:0 8px}
 .raildiv{height:1px;background:var(--sur3);margin:7px 10px}
 .rail:not(.open) .raildiv{margin:8px 6px}
@@ -348,9 +356,9 @@ input{font:inherit;color:inherit}
 /* Themeneinträge etwas eingerückt und ruhiger als die Gruppenköpfe */
 /* Themeneintraege tragen dieselbe Schrift wie die Eintraege unter dem Trenner —
    nur eingerueckt, damit die Hierarchie erhalten bleibt. */
-.railgroup-b .railbtn{height:40px;font-weight:700;font-size:13.5px;color:var(--mut)}
+.railgroup-b .railbtn{height:40px;font-weight:700;font-size:13.5px;color:var(--railtxt)}
 .rail.open .railgroup-b .railbtn{padding-left:20px}
-.railgroup-b .railbtn .ic{font-size:14px;line-height:1;overflow:visible;color:var(--mut)}
+.railgroup-b .railbtn .ic{font-size:14px;line-height:1;overflow:visible;color:var(--railtxt)}
 /* Das aktive Thema wird nur durch die Farbe markiert — die graue Flaeche bleibt
    dem Ueberthema vorbehalten, sonst konkurrieren zwei Hervorhebungen. */
 .railgroup-b .railbtn.on{background:transparent;color:var(--blue)}
@@ -691,7 +699,7 @@ canvas.drag{cursor:grabbing}
 @media (hover:hover){.zrow .ztrack:hover .knob{box-shadow:0 0 0 5px rgba(43,134,240,.22)}}
 .zhint{margin-left:auto}
 @media (max-width:520px){ .zhint{display:none} .zrow .ztrack{flex:1 1 auto;width:auto} }
-.fml{padding:10px 0;border-bottom:1px solid var(--sur3);animation:fadeUp var(--t2) var(--e) both}
+.fml{padding:10px 0;border-bottom:1px solid var(--sur3)}
 .fml:last-child{border-bottom:none;padding-bottom:0}
 .fml .t{font-size:10.5px;color:var(--mut2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;font-weight:700}
 .fml .h{font-family:var(--math);font-size:14.5px;color:var(--mathtxt);line-height:1.9;font-weight:400}
@@ -707,13 +715,14 @@ canvas.drag{cursor:grabbing}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex:0 0 7px}
 .info-head .btn{margin-left:auto;flex:0 0 auto}
 @media (max-width:520px){ .info-head .btn{margin-left:0;width:100%;text-align:center} }
-.tab{padding:8px 15px;border-radius:20px;font-size:12.5px;font-weight:700;color:var(--mut);
+.tab{padding:8px 15px;border-radius:20px;font-size:12.5px;font-weight:700;color:var(--txt);
   white-space:nowrap;background:transparent;flex:0 0 auto;position:relative;z-index:1;
   transition:color var(--t2) var(--e),transform var(--t1) var(--e)}
 @media (hover:hover){.tab:hover{background:var(--sur2);color:var(--on)}}
 .tab:active{transform:scale(.95)}
-@media (hover:hover){.tab.on,.tab.on:hover{background:transparent;color:#fff}}   /* sitzt auf der blauen Pille */
-.tab.rnd:not(.on){color:var(--mut)}
+.tab.on{background:transparent;color:#fff}   /* sitzt auf der blauen Pille */
+@media (hover:hover){.tab.on:hover{background:transparent;color:#fff}}
+.tab.rnd:not(.on){color:var(--txt)}
 @media (hover:hover){.tab.rnd:not(.on):hover{background:var(--sur2);color:var(--on)}}
 /* Die blaue Markierung ist ein eigenes Element und gleitet zwischen den Reitern */
 .tabind{position:absolute;top:0;height:100%;border-radius:20px;background:var(--blue);
@@ -873,7 +882,7 @@ td.name .ico{display:inline-grid;place-items:center;width:24px;height:24px;borde
 <div class="scrim" id="scrim"></div>
 
 <header class="hdr">
-  <button class="burger" id="menub" title="Menü"><svg><use href="#i-burger"/></svg></button>
+  <button class="burger" id="menub" title="Menü" aria-label="Menü öffnen oder schließen"><svg><use href="#i-burger"/></svg></button>
   <div class="hdr-in"><div class="hdr-row">
     <div class="wordmark"><span class="sig"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.6c6.1 2.3 10.4 6.9 10.4 13.2 0 6.9-4.7 12-10.4 13.6C10.3 27.8 5.6 22.7 5.6 15.8 5.6 9.5 9.9 4.9 16 2.6z" fill="currentColor"/><path class="ink" d="M20 10.6h-8.4l5.1 5.6-5.1 5.6H20" fill="none" stroke="#0e202d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Mathe Trainer</span></div>
     <div class="hdr-r">
@@ -884,7 +893,8 @@ td.name .ico{display:inline-grid;place-items:center;width:24px;height:24px;borde
   </div></div>
 </header>
 
-<aside class="rail" id="rail">
+<aside class="rail" id="rail" role="navigation" aria-label="Themen und Modi">
+  <div class="railround" aria-hidden="true"></div>
   <div class="railview" id="railView"></div>
   <div class="raildiv topdiv"></div>
   <div class="railsearch">
@@ -898,7 +908,7 @@ td.name .ico{display:inline-grid;place-items:center;width:24px;height:24px;borde
   </div>
 </aside>
 
-<div class="typebar" id="typebar">
+<div class="typebar" id="typebar" role="navigation" aria-label="Aufgabentyp">
   <div class="typewrap">
     <div class="pillbox"><div class="pillbar" id="tabsRow">
       <span class="tabind" id="tabInd"></span>
@@ -912,14 +922,14 @@ td.name .ico{display:inline-grid;place-items:center;width:24px;height:24px;borde
 
 <div class="menu" id="modeMenu"></div>
 
-<div class="page" id="page">
+<div class="page" id="page" role="main" aria-label="Aufgabenbereich">
   <div class="topround" aria-hidden="true"></div>
 
   <div class="view on" id="vTrain"><div class="wrap">
 
     <section class="panel" id="taskCard">
       <div class="disp">
-        <div class="stage" id="stage"><div><div id="prompt"></div></div></div>
+        <div class="stage" id="stage" role="math" aria-live="polite"><div><div id="prompt"></div></div></div>
         <div class="metastrip">
           <div class="mcell"><span>Thema</span><div class="box" id="mTopic">—</div></div>
           <div class="mcell"><span>Aufgabentyp</span><div class="box" id="mType">—</div></div>
@@ -1166,7 +1176,14 @@ const FUNCS = {
   },
   frac: function (a, b) { return b === undefined ? a : a / b; },
 };
-const CONSTS = { pi: Math.PI, 'π': Math.PI, e: Math.E, tau: 2 * Math.PI };
+const CONSTS = { pi: Math.PI, 'π': Math.PI, e: Math.E, tau: 2 * Math.PI, inf: Infinity, infty: Infinity, unendlich: Infinity };
+/* Namen, die aus mehreren Buchstaben bestehen und deshalb beim Zerlegen
+   zusammenbleiben muessen — laengster Treffer zuerst, damit sinh vor sin und
+   log10 vor log gefunden wird. Alles andere ist eine einbuchstabige Variable:
+   xy heisst x mal y, nicht „eine Variable namens xy". */
+const NAMES = Object.keys(FUNCS).concat(Object.keys(CONSTS))
+  .filter(n => n.length > 1 && /^[a-z0-9]+$/.test(n))
+  .sort((a, b) => b.length - a.length);
 
 /* Ein Komma ist in Deutschland ein Dezimaltrenner — ausser in Funktionen mit
    zwei Argumenten wie root(3, x) oder log(2, 8). Dafuer merken wir uns, in
@@ -1193,6 +1210,10 @@ function fixCommas(s) {
 
 function tokenize(src) {
   let s = String(src)
+    /* Gemischter Bruch: „2 1/2" meint 2 + 1/2 und nicht 21/2. Muss vor dem
+       Entfernen der Leerzeichen erkannt werden, sonst geht die Information
+       verloren. */
+    .replace(/(^|[^0-9.])([0-9]+)\s+([0-9]+\s*\/\s*[0-9]+)/g, '$1($2+$3)')
     .replace(/\s+/g, '')
     .replace(/−|–|—/g, '-')
     .replace(/·|×|\*/g, '*')
@@ -1211,7 +1232,23 @@ function tokenize(src) {
       if (m) j += m[0].length;
       t.push({ t: 'num', v: parseFloat(s.slice(i, j)) }); i = j;
     }
-    else if (/[a-zA-Z]/.test(c)) { let j = i; while (j < s.length && /[a-zA-Z0-9_]/.test(s[j])) j++; t.push({ t: 'id', v: s.slice(i, j).toLowerCase() }); i = j; }
+    else if (/[a-zA-Z]/.test(c)) {
+      let j = i; while (j < s.length && /[a-zA-Z0-9_]/.test(s[j])) j++;
+      const w = s.slice(i, j).toLowerCase();
+      let k = 0;
+      while (k < w.length) {
+        let hit = null;
+        for (let n = 0; n < NAMES.length; n++) { if (w.lastIndexOf(NAMES[n], k) === k) { hit = NAMES[n]; break; } }
+        if (hit) { t.push({ t: 'id', v: hit }); k += hit.length; }
+        else if (/[0-9.]/.test(w[k])) {                 /* x2 heisst x mal 2 */
+          let m = k; while (m < w.length && /[0-9.]/.test(w[m])) m++;
+          t.push({ t: 'num', v: parseFloat(w.slice(k, m)) }); k = m;
+        }
+        else if (w[k] === '_') k++;                      /* x_1 → x */
+        else { t.push({ t: 'id', v: w[k] }); k++; }      /* einzelner Buchstabe = Variable */
+      }
+      i = j;
+    }
     else if ('+-*/^(),|'.indexOf(c) >= 0) { t.push({ t: c }); i++; }
     else throw new Error('Unbekanntes Zeichen: ' + c);
   }
@@ -1367,10 +1404,15 @@ function fnEqual2(g, ref, opts) {
   opts = opts || {};
   const lo = opts.lo === undefined ? 0.4 : opts.lo, hi = opts.hi === undefined ? 2.6 : opts.hi;
   let ok = 0, bad = 0;
+  /* Vorzeichenkombinationen: nur der erste Quadrant wuerde x·y und |x·y|
+     gleich aussehen lassen. Punkte ausserhalb des Definitionsbereichs
+     fallen ueber die Endlichkeitspruefung unten von selbst heraus. */
+  const SIG = lo >= 0 ? [[1, 1], [-1, 1], [1, -1], [-1, -1]] : [[1, 1]];
+  for (let q = 0; q < SIG.length; q++)
   for (let i = 0; i < 6; i++) {
     for (let j = 0; j < 6; j++) {
-      const x = lo + (hi - lo) * (i + 0.5) / 6 + (Math.random() - 0.5) * 0.01;
-      const y = lo + (hi - lo) * (j + 0.5) / 6 + (Math.random() - 0.5) * 0.01;
+      const x = SIG[q][0] * (lo + (hi - lo) * (i + 0.5) / 6 + (Math.random() - 0.5) * 0.01);
+      const y = SIG[q][1] * (lo + (hi - lo) * (j + 0.5) / 6 + (Math.random() - 0.5) * 0.01);
       const a = g(x, y), b = ref(x, y);
       if (!isFinite(a) || !isFinite(b) || Math.abs(b) > 1e8) continue;
       ok++;
@@ -1444,13 +1486,17 @@ function fnEqual(g, ref, opts) {
   opts = opts || {};
   const lo = opts.lo === undefined ? -3.13 : opts.lo, hi = opts.hi === undefined ? 3.17 : opts.hi;
   let ok = 0, bad = 0;
-  for (let i = 0; i < 40 && ok < 12; i++) {
-    const x = lo + (hi - lo) * (i + 0.5) / 40 + (Math.random() - 0.5) * 0.01;
+  const probe = x => {
     const a = g(x), b = ref(x);
-    if (!isFinite(a) || !isFinite(b) || Math.abs(b) > 1e7) continue;
+    if (!isFinite(a) || !isFinite(b) || Math.abs(b) > 1e7) return;
     ok++;
     if (!close(a, b, 1e-5)) bad++;
-  }
+  };
+  for (let i = 0; i < 40 && ok < 12; i++) probe(lo + (hi - lo) * (i + 0.5) / 40 + (Math.random() - 0.5) * 0.01);
+  /* Der Standardbereich reicht bereits von −3 bis +3. Wird ausdruecklich ein
+     Bereich im Positiven verlangt, dann deshalb, weil der Term links davon
+     nicht definiert ist (Wurzeln, Logarithmen, Polstellen) — dort wird
+     bewusst nicht gespiegelt geprueft. */
   return ok >= 4 && bad === 0;
 }
 /* Stammfunktion: gleich bis auf Konstante */
@@ -1487,16 +1533,23 @@ function powHTML(base, e) { return base + '<sup>' + e + '</sup>'; }
 function pw(b, e) { if (e === 0) return '1'; if (e === 1) return b; return b + '<sup>' + e + '</sup>'; }
 
 /* Koeffizient vor Variable */
+/* Beginnt der Term mit einer Ziffer, muss ein Malpunkt zwischen Faktor und
+   Term: 3·2^x — sonst laese man dort die Zahl 32. */
+function startsDigit(h) {
+  const t = String(h).replace(/<[^>]*>/g, '').replace(/&[a-z]+;|&#[0-9]+;/g, '');
+  return /^[0-9]/.test(t.trim());
+}
 function coefHTML(c, body, first) {
   const F0 = F.of(c);
   if (F0.isZero()) return '';
   const neg = F0.v < 0;
   const a = F0.abs();
   let core;
+  const dot = startsDigit(body) ? '<span class="op">·</span>' : '';
   if (!body) core = a.html();
   else if (a.eq(new F(1, 1))) core = body;
-  else if (a.isInt()) core = a.html() + body;
-  else core = a.html() + body;
+  else if (a.isInt()) core = a.html() + dot + body;
+  else core = a.html() + dot + body;
   if (first) return (neg ? MINUS : '') + core;
   return '<span class="op">' + (neg ? MINUS : '+') + '</span>' + core;
 }
@@ -2617,6 +2670,9 @@ function genPotenz(d, v) {
     const nn = pick(d <= 4 ? [2, 3] : [2, 3, 4, 5]);
     let mm = pick(d <= 4 ? [2, 3, 4] : [2, 3, 4, 5, 6, 7]);
     if (mm === nn) mm = nn + 1;
+    /* 4/2 waere kein echter Bruchexponent — solange kuerzen, bis er teilerfremd ist */
+    for (let i = 0; i < 12 && gcd(mm, nn) !== 1; i++) mm = pick([2, 3, 4, 5, 6, 7]);
+    if (gcd(mm, nn) !== 1) return genPotenz(d, 'negativ');
     const x0 = Math.pow(base, nn);
     const a = Math.pow(x0, mm / nn);
     return {
@@ -7081,6 +7137,2920 @@ addVar('partiell', 'stelle', 'Wert an einer Stelle', 'Erst ableiten, dann den Pu
 </script>
 <script>
 /* ============================================================
+   TEIL 11 — Struktur statt groesserer Zahlen
+   ============================================================
+   Bisher wuchsen mit der Stufe vor allem die Zahlen. Was eine
+   Klausuraufgabe wirklich schwer macht, ist aber der Bau: eine Basis
+   muss erst umgeschrieben werden, ein Faktor ausgeklammert, eine
+   Substitution gefunden, eine Scheinloesung ausgeschlossen.
+
+   Jede Funktion hier ersetzt ab einer bestimmten Stufe die bisherige
+   Bauform desselben Aufgabentyps. Unterhalb davon bleibt alles wie es
+   war — der Einstieg soll einfach bleiben.
+   ============================================================ */
+
+var HARDSTAT = {};                                /* nur fuer die Testlaeufe */
+function harden(id, vid, from, fn) {
+  const t = TOPICS.filter(x => x.id === id)[0];
+  if (!t) return;
+  const base = t.gen;
+  const key = id + '/' + vid;
+  HARDSTAT[key] = { hit: 0, miss: 0 };
+  t.gen = function (d, v) {
+    if (v === vid && d >= from) {
+      const k = fn(d);
+      if (k) { HARDSTAT[key].hit++; return k; }
+      HARDSTAT[key].miss++;
+    }
+    return base.call(t, d, v);
+  };
+}
+/* Potenz als ausgerechnete Zahl oder als Stammbruch: 2^3 → 8, 2^-3 → 1/8 */
+function powWert(base, e) {
+  return e >= 0 ? '' + Math.pow(base, e) : fracHTML(1, Math.pow(base, -e));
+}
+
+/* ============================================================
+   EXPONENTIALGLEICHUNGEN
+   ============================================================ */
+
+/* Gleiche Basis — aber erst nach dem Umschreiben.
+   4^(x+1) = 8^(x−2) sieht nach zwei Basen aus und ist eine. */
+harden('expo', 'basis', 5, function (d) {
+  const b = pick([2, 3, 5]);
+  const hoch = d >= 8;
+  let e1 = ri(1, 3), e2 = ri(1, 3);
+  if (hoch && coin(0.5)) e1 = -e1;                 /* (1/8)^… als linke Seite */
+  if (hoch && coin(0.35)) e2 = -e2;
+  if (e1 === e2) return null;                      /* sonst stehen dieselben Basen da */
+  const m = rnz(-6, 6), k = rnz(-4, 4), n = rnz(-9, 9);
+  const den = e1 - e2 * k;
+  if (den === 0) return null;
+  const s = new F(e2 * n - e1 * m, den);
+  if (Math.abs(s.v) > 30 || s.d > 6) return null;
+  const L = powWert(b, e1), R = powWert(b, e2);
+  const lin1 = polyHTML([1, m]), lin2 = polyHTML([k, n]);
+  return {
+    promptHTML: '<span class="big">' + parenIf(L) + '<sup>' + lin1 + '</sup> <span class="rel">=</span> '
+      + parenIf(R) + '<sup>' + lin2 + '</sup></span>',
+    fields: [Fnum()], check: checkNum(s.v), solHTML: V() + ' = ' + s.html(),
+    steps: [
+      st('Gemeinsame Basis suchen', 'Beide Zahlen sind Potenzen von <b>' + b + '</b>: '
+        + L + ' = ' + b + '<sup>' + e1 + '</sup> &nbsp;·&nbsp; ' + R + ' = ' + b + '<sup>' + e2 + '</sup>'),
+      st('Potenzgesetz', '(' + b + '<sup>' + e1 + '</sup>)<sup>' + lin1 + '</sup> = '
+        + b + '<sup>' + e1 + '·(' + lin1 + ')</sup> — die Exponenten werden multipliziert.'),
+      st('Jetzt gleiche Basis', b + '<sup>' + polyHTML([e1, e1 * m]) + '</sup> = ' + b + '<sup>' + polyHTML([e2 * k, e2 * n]) + '</sup>'),
+      st('Exponenten vergleichen', polyHTML([e1, e1 * m]) + ' = ' + polyHTML([e2 * k, e2 * n])),
+      st('Auflösen', polyHTML([den, 0]) + ' = ' + num(e2 * n - e1 * m) + ' → ' + V() + ' = <b>' + s.html() + '</b>')
+    ]
+  };
+});
+function parenIf(h) { return h.indexOf('frac') >= 0 ? '(' + h + ')' : h; }
+
+/* Logarithmieren — mit linearem Exponenten und ab Stufe 7 mit zwei Basen */
+harden('expo', 'log', 4, function (d) {
+  const a = pick([2, 3, 5, 10]);
+  const k = rnz(-4, 4), c = rnz(-6, 6);
+  if (d >= 7 && coin(0.6)) {
+    /* a^(kx+c) = (a^j)^(mx+n) — rechts steht eine andere Zahl, dieselbe Basis */
+    const j = ri(2, 3), m = rnz(-3, 3), n = rnz(-6, 6);
+    const den = k - j * m;
+    if (den === 0) return null;
+    const s = new F(j * n - c, den);
+    if (Math.abs(s.v) > 25 || s.d > 6) return null;
+    return {
+      promptHTML: '<span class="big">' + a + '<sup>' + polyHTML([k, c]) + '</sup> <span class="rel">=</span> '
+        + Math.pow(a, j) + '<sup>' + polyHTML([m, n]) + '</sup></span>',
+      fields: [Fnum()], check: checkNum(s.v), solHTML: V() + ' = ' + s.html(),
+      steps: [
+        st('Rechte Seite umschreiben', Math.pow(a, j) + ' = ' + a + '<sup>' + j + '</sup>, also '
+          + a + '<sup>' + j + '·(' + polyHTML([m, n]) + ')</sup> = ' + a + '<sup>' + polyHTML([j * m, j * n]) + '</sup>'),
+        st('Exponenten vergleichen', polyHTML([k, c]) + ' = ' + polyHTML([j * m, j * n])),
+        st('Auflösen', polyHTML([den, 0]) + ' = ' + num(j * n - c) + ' → ' + V() + ' = <b>' + s.html() + '</b>')
+      ]
+    };
+  }
+  /* a^(kx+c) = b, b eine Potenz von a */
+  const j = ri(1, d <= 6 ? 4 : 6);
+  const s = new F(j - c, k);
+  if (Math.abs(s.v) > 25 || s.d > 6) return null;
+  return {
+    promptHTML: '<span class="big">' + a + '<sup>' + polyHTML([k, c]) + '</sup> <span class="rel">=</span> '
+      + Math.pow(a, j) + '</span>',
+    fields: [Fnum()], check: checkNum(s.v), solHTML: V() + ' = ' + s.html(),
+    steps: [
+      st('Rechte Seite als Potenz', Math.pow(a, j) + ' = ' + a + '<sup>' + j + '</sup>'),
+      st('Exponenten vergleichen', polyHTML([k, c]) + ' = ' + j),
+      st('Auflösen', polyHTML([k, 0]) + ' = ' + num(j - c) + ' → ' + V() + ' = <b>' + s.html() + '</b>')
+    ]
+  };
+});
+
+/* e-Funktion & Co. — ab Stufe 5 muss erst isoliert, ab Stufe 7 ausgeklammert werden.
+   a^(x+1) − a^x = c ist die klassische Aufgabe, an der das Ausklammern haengt. */
+harden('expo', 'efkt', 5, function (d) {
+  const a = pick(d <= 7 ? [2, 3, 5] : [2, 3, 4, 5]);
+  if (d >= 7) {
+    /* c1·a^(x+p) + c2·a^x = r  →  a^x·(c1·a^p + c2) = r */
+    const p = ri(1, 2);
+    const c1 = rnz(-4, 4), c2 = rnz(-6, 6);
+    const fak = c1 * Math.pow(a, p) + c2;
+    if (fak === 0) return null;
+    const x0 = ri(0, a >= 5 ? 3 : (d <= 8 ? 4 : 5));
+    const r = Math.pow(a, x0) * fak;
+    if (Math.abs(r) > 2e5) return null;
+    const t1 = coefHTML(c1, a + '<sup>' + polyHTML([1, p]) + '</sup>', true);
+    const t2 = coefHTML(c2, a + '<sup>' + V() + '</sup>', false);
+    return {
+      promptHTML: '<span class="big">' + t1 + t2 + ' <span class="rel">=</span> ' + num(r) + '</span>',
+      fields: [Fnum()], check: checkNum(x0), solHTML: V() + ' = ' + x0,
+      steps: [
+        st('Exponenten trennen', a + '<sup>' + polyHTML([1, p]) + '</sup> = ' + a + '<sup>' + V() + '</sup>·'
+          + a + '<sup>' + p + '</sup> = ' + Math.pow(a, p) + '·' + a + '<sup>' + V() + '</sup>'),
+        st('Ausklammern', a + '<sup>' + V() + '</sup>·(' + num(c1) + '·' + Math.pow(a, p) + addHTML(c2) + ') = ' + num(r)),
+        st('Zusammenfassen', a + '<sup>' + V() + '</sup>·' + paren(fak) + ' = ' + num(r)),
+        st('Potenz isolieren', a + '<sup>' + V() + '</sup> = ' + fracHTML(num(r), num(fak)) + ' = ' + Math.pow(a, x0)),
+        st('Exponenten vergleichen', Math.pow(a, x0) + ' = ' + a + '<sup>' + x0 + '</sup> → ' + V() + ' = <b>' + x0 + '</b>')
+      ]
+    };
+  }
+  /* c·a^(kx) + e = f  →  erst die Zahl wegschaffen, dann isolieren */
+  const k = pick([1, 1, 2]);
+  const c = rnz(-5, 5);
+  const m = ri(1, 4);
+  const e = rnz(-20, 20);
+  const f = c * Math.pow(a, m) + e;
+  const sv = new F(m, k);
+  const kx = (k === 1 ? V() : k + V());
+  return {
+    promptHTML: '<span class="big">' + coefHTML(c, a + '<sup>' + kx + '</sup>', true) + addHTML(e)
+      + ' <span class="rel">=</span> ' + num(f) + '</span>',
+    fields: [Fnum()], check: checkNum(sv.v), solHTML: V() + ' = ' + sv.html(),
+    steps: [
+      st('Zahl wegschaffen', coefHTML(c, a + '<sup>' + kx + '</sup>', true) + ' = ' + num(f) + addHTML(-e) + ' = ' + num(f - e)),
+      st('Potenz isolieren', a + '<sup>' + kx + '</sup> = ' + fracHTML(num(f - e), num(c)) + ' = ' + Math.pow(a, m)),
+      st('Als Potenz schreiben', Math.pow(a, m) + ' = ' + a + '<sup>' + m + '</sup>'),
+      st('Auflösen', kx + ' = ' + m + ' → ' + V() + ' = <b>' + sv.html() + '</b>')
+    ]
+  };
+});
+
+/* Substitution — mit dem Zwischenschritt, den die Aufgabe erst schwer macht:
+   4^x muss als (2^x)² erkannt werden, 2^(x+1) als 2·2^x. */
+harden('expo', 'subst', 5, function (d) {
+  const a = pick([2, 3, 5]);
+  const m1 = ri(0, 3), m2 = ri(0, 4);
+  const u1 = Math.pow(a, m1), u2 = Math.pow(a, m2);
+
+  if (d >= 8 && coin(0.45)) {
+    /* Eine Loesung faellt weg: u wird negativ, a^x kann das nie sein. */
+    const uneg = -ri(1, 12);
+    const p = u1 + uneg, q = u1 * uneg;
+    return {
+      promptHTML: '<span class="big">' + pw(a, '2' + V()) + coefHTML(-p, pw(a, V()), false)
+        + coefHTML(q, '', false) + ' <span class="rel">=</span> 0</span>',
+      fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums([m1]), solHTML: setHTML([m1]),
+      steps: [
+        st('Substitution', 'u = ' + a + '<sup>' + V() + '</sup>, damit wird ' + a + '<sup>2' + V() + '</sup> zu u²'),
+        st('Quadratische Gleichung', 'u²' + coefHTML(-p, 'u', false) + coefHTML(q, '', false)
+          + ' = 0 → u<sub>1</sub> = ' + u1 + ', u<sub>2</sub> = ' + num(uneg)),
+        st('Definitionsbereich', a + '<sup>' + V() + '</sup> ist <b>immer positiv</b> — u<sub>2</sub> = '
+          + num(uneg) + ' scheidet aus.'),
+        st('Rücksubstitution', a + '<sup>' + V() + '</sup> = ' + u1 + ' = ' + a + '<sup>' + m1 + '</sup> → '
+          + V() + ' = <b>' + m1 + '</b>'),
+        st('Ergebnis', setHTML([m1]))
+      ]
+    };
+  }
+
+  if (d >= 7) {
+    /* a^(2x) − p·a^(x+1) + q = 0 — der Vorfaktor a steckt im Exponenten */
+    const summe = u1 + u2;
+    if (summe % a !== 0 || m1 === m2) return null;
+    const p = summe / a, q = u1 * u2;
+    const sol = uniqSorted([m1, m2]);
+    return {
+      promptHTML: '<span class="big">' + pw(a, '2' + V()) + coefHTML(-p, a + '<sup>' + polyHTML([1, 1]) + '</sup>', false)
+        + coefHTML(q, '', false) + ' <span class="rel">=</span> 0</span>',
+      fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums(sol), solHTML: setHTML(sol),
+      steps: [
+        st('Exponenten trennen', a + '<sup>' + polyHTML([1, 1]) + '</sup> = ' + a + '·' + a + '<sup>' + V()
+          + '</sup> — der Vorfaktor ' + a + ' muss vor die Substitution.'),
+        st('Umgeschrieben', a + '<sup>2' + V() + '</sup> − ' + (p * a) + '·' + a + '<sup>' + V() + '</sup>'
+          + addHTML(q) + ' = 0'),
+        st('Substitution', 'u = ' + a + '<sup>' + V() + '</sup> → u² − ' + (p * a) + 'u' + addHTML(q) + ' = 0'),
+        st('Lösen', 'u<sub>1</sub> = ' + u1 + ', u<sub>2</sub> = ' + u2),
+        st('Rücksubstitution', V() + '<sub>1</sub> = ' + m1 + ', ' + V() + '<sub>2</sub> = ' + m2),
+        st('Ergebnis', setHTML(sol))
+      ]
+    };
+  }
+
+  /* (a²)^x − p·a^x + q = 0 — links steht eine andere Zahl als die Basis */
+  if (m1 === m2) return null;
+  const a2 = a * a;
+  const p = u1 + u2, q = u1 * u2;
+  const sol = uniqSorted([m1, m2]);
+  return {
+    promptHTML: '<span class="big">' + pw(a2, V()) + coefHTML(-p, pw(a, V()), false)
+      + coefHTML(q, '', false) + ' <span class="rel">=</span> 0</span>',
+    fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums(sol), solHTML: setHTML(sol),
+    steps: [
+      st('Basen vergleichen', a2 + ' = ' + a + '², also ' + a2 + '<sup>' + V() + '</sup> = ('
+        + a + '<sup>' + V() + '</sup>)²'),
+      st('Substitution', 'u = ' + a + '<sup>' + V() + '</sup> → u² − ' + p + 'u' + addHTML(q) + ' = 0'),
+      st('Lösen', 'u<sub>1</sub> = ' + u1 + ', u<sub>2</sub> = ' + u2),
+      st('Rücksubstitution', a + '<sup>' + V() + '</sup> = ' + u1 + ' → ' + V() + ' = ' + m1
+        + '<br>' + a + '<sup>' + V() + '</sup> = ' + u2 + ' → ' + V() + ' = ' + m2),
+      st('Ergebnis', setHTML(sol))
+    ]
+  };
+});
+
+/* ============================================================
+   LOGARITHMUSGLEICHUNGEN
+   ============================================================ */
+
+/* Grundform mit linearem Argument, ganz oben mit der Unbekannten als Basis */
+harden('logar', 'grund', 4, function (d) {
+  if (d >= 7 && coin(0.5)) {
+    /* log_x(a) = b — gesucht ist die Basis */
+    const x0 = ri(2, 9), b = ri(2, d <= 8 ? 3 : 4);
+    const a = Math.pow(x0, b);
+    return {
+      promptHTML: '<span class="big">log<sub>' + V() + '</sub>(' + a + ') <span class="rel">=</span> ' + b + '</span>',
+      qtext: 'Hier ist die <b>Basis</b> gesucht.',
+      fields: [Fnum()], check: checkNum(x0), solHTML: V() + ' = ' + x0,
+      steps: [
+        st('Definition', 'log<sub>b</sub>(a) = c bedeutet b<sup>c</sup> = a.'),
+        st('Umschreiben', V() + '<sup>' + b + '</sup> = ' + a),
+        st('Wurzel ziehen', V() + ' = ' + sqrtHTML(a, b) + ' = <b>' + x0 + '</b>'),
+        st('Probe', x0 + '<sup>' + b + '</sup> = ' + a + ' ✓')
+      ]
+    };
+  }
+  const a = pick(d <= 6 ? [2, 3, 5, 10] : [2, 3, 4, 5, 6, 7, 10]);
+  const b = ri(d <= 6 ? 1 : -2, d <= 6 ? 4 : 5);
+  const k = rnz(-5, 5), c = rnz(-9, 9);
+  const rhs = Math.pow(a, b);
+  const s = new F(F.of(rhs).sub(c).n, F.of(rhs).sub(c).d * k);
+  const sv = (rhs - c) / k;
+  if (!isNice(sv) || Math.abs(sv) > 40) return null;
+  return {
+    promptHTML: '<span class="big">log<sub>' + a + '</sub>(' + polyHTML([k, c]) + ') <span class="rel">=</span> '
+      + num(b) + '</span>',
+    fields: [Fnum()], check: checkNum(sv), solHTML: V() + ' = ' + valHTML(sv),
+    steps: [
+      st('Definition anwenden', polyHTML([k, c]) + ' = ' + a + '<sup>' + num(b) + '</sup> = ' + valHTML(rhs)),
+      st('Lineare Gleichung', polyHTML([k, 0]) + ' = ' + valHTML(rhs - c)),
+      st('Auflösen', V() + ' = ' + fracHTML(valHTML(rhs - c), num(k)) + ' = <b>' + valHTML(sv) + '</b>'),
+      st('Definitionsmenge', 'Das Argument muss positiv sein: ' + valHTML(rhs) + ' &gt; 0 ✓')
+    ]
+  };
+});
+
+/* Logarithmusgesetze — erst Potenzgesetz, ab Stufe 7 mit Zahl auf der rechten
+   Seite (dann muss entlogarithmiert werden) und einer Scheinlösung. */
+harden('logar', 'regeln', 5, function (d) {
+  if (d >= 8 && coin(0.4)) {
+    /* log_a(kx+p) − log_a(x+q) = c  →  Quotientenregel, dann linear */
+    const a = pick([2, 3, 5, 10]);
+    const c = ri(1, a === 10 ? 2 : (a === 2 ? 4 : 2));
+    const A = Math.pow(a, c);
+    const x0 = ri(1, 12), q = rnz(-x0 + 1, 9);
+    const k = ri(2, 6);
+    const p = A * (x0 + q) - k * x0;                 /* so geht die Gleichung auf */
+    if (k * x0 + p <= 0 || Math.abs(p) > 300) return null;
+    if (k === A) return null;                        /* sonst faellt x heraus */
+    return {
+      promptHTML: '<span class="big">log<sub>' + a + '</sub>(' + polyHTML([k, p]) + ') <span class="op">−</span> log<sub>'
+        + a + '</sub>(' + polyHTML([1, q]) + ') <span class="rel">=</span> ' + c + '</span>',
+      fields: [Fnum()], check: checkNum(x0), solHTML: V() + ' = ' + x0,
+      steps: [
+        st('Definitionsmenge', 'Beide Argumente müssen positiv sein.'),
+        st('Quotientenregel', 'log<sub>' + a + '</sub>(' + fracHTML(polyHTML([k, p]), polyHTML([1, q])) + ') = ' + c),
+        st('Entlogarithmieren', fracHTML(polyHTML([k, p]), polyHTML([1, q])) + ' = ' + a + '<sup>' + c + '</sup> = ' + A),
+        st('Nenner hochmultiplizieren', polyHTML([k, p]) + ' = ' + A + '·(' + polyHTML([1, q]) + ') = '
+          + polyHTML([A, A * q])),
+        st('Auflösen', polyHTML([k - A, 0]) + ' = ' + num(A * q - p) + ' → ' + V() + ' = <b>' + x0 + '</b>')
+      ]
+    };
+  }
+
+  if (d >= 7) {
+    /* log_a(x+u) + log_a(x+v) = c  →  Produkt, quadratische Gleichung, Scheinloesung */
+    const a = pick([2, 3, 5, 6, 7, 10]);
+    const c = ri(2, a === 2 ? 7 : (a <= 3 ? 5 : (a <= 7 ? 3 : 2)));
+    const P = Math.pow(a, c);
+    const paare = [];
+    for (let s = 1; s * s <= P; s++) if (P % s === 0) paare.push([s, P / s]);
+    if (!paare.length) return null;
+    const [s1, s2] = pick(paare);
+    if (s2 > 400) return null;
+    const x0 = ri(1, 14);
+    const u = x0 - s1, v = x0 - s2;                  /* (x+(-u))(x+(-v)) = P bei x = x0 */
+    if (Math.abs(u) > 40 || Math.abs(v) > 40) return null;
+    const zweit = u + v - x0;                        /* faellt aus der Definitionsmenge */
+    return {
+      promptHTML: '<span class="big">log<sub>' + a + '</sub>(' + polyHTML([1, -u]) + ') <span class="op">+</span> log<sub>' + a
+        + '</sub>(' + polyHTML([1, -v]) + ') <span class="rel">=</span> ' + c + '</span>',
+      fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums([x0]), solHTML: setHTML([x0]),
+      steps: [
+        st('Definitionsmenge', 'Beide Argumente müssen positiv sein: ' + V() + ' &gt; ' + num(Math.max(u, v))),
+        st('Summe zu Produkt', 'log<sub>' + a + '</sub>((' + polyHTML([1, -u]) + ')·(' + polyHTML([1, -v]) + ')) = ' + c),
+        st('Entlogarithmieren', '(' + polyHTML([1, -u]) + ')·(' + polyHTML([1, -v]) + ') = ' + a + '<sup>' + c + '</sup> = ' + P),
+        st('Quadratische Gleichung', polyHTML([1, -(u + v), u * v - P]) + ' = 0 → ' + V() + '<sub>1</sub> = ' + x0
+          + ', ' + V() + '<sub>2</sub> = ' + num(zweit)),
+        st('Scheinlösung streichen', V() + '<sub>2</sub> = ' + num(zweit) + ' liegt nicht in der Definitionsmenge.'),
+        st('Ergebnis', setHTML([x0]))
+      ]
+    };
+  }
+  /* n·lg(x) − lg(k) = lg(b)  →  Potenzgesetz und Differenzregel */
+  const n = pick([2, 2, 3]);
+  const x0 = ri(2, d <= 6 ? 9 : 14);
+  const P = Math.pow(x0, n);
+  const teiler = [];
+  for (let t = 2; t <= Math.min(P, 60); t++) if (P % t === 0 && P / t > 1) teiler.push(t);
+  if (!teiler.length) return null;
+  const k = pick(teiler);
+  const b = new F(P, k);
+  return {
+    promptHTML: '<span class="big">' + n + '·lg(' + V() + ') <span class="op">−</span> lg(' + k
+      + ') <span class="rel">=</span> lg(' + b.n + ')</span>',
+    fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums([x0]), solHTML: setHTML([x0]),
+    steps: [
+      st('Definitionsmenge', V() + ' &gt; 0'),
+      st('Potenzgesetz', n + '·lg(' + V() + ') = lg(' + V() + '<sup>' + n + '</sup>)'),
+      st('Differenzregel', 'lg(' + fracHTML(V() + '<sup>' + n + '</sup>', k) + ') = lg(' + b.n + ')'),
+      st('Argumente gleichsetzen', fracHTML(V() + '<sup>' + n + '</sup>', k) + ' = ' + b.n + ' → '
+        + V() + '<sup>' + n + '</sup> = ' + Math.pow(x0, n)),
+      st('Wurzel ziehen', V() + ' = ' + sqrtHTML(Math.pow(x0, n), n) + ' = <b>' + x0 + '</b>'
+        + (n % 2 === 0 ? ' — die negative Wurzel entfällt wegen der Definitionsmenge.' : '')),
+      st('Ergebnis', setHTML([x0]))
+    ]
+  };
+});
+
+/* ============================================================
+   WURZELGLEICHUNGEN
+   ============================================================ */
+
+/* Ab Stufe 5 steht rechts ein x — quadrieren erzeugt eine quadratische
+   Gleichung und moeglicherweise eine Scheinloesung. Ab Stufe 8 stehen
+   zwei Wurzeln da und es muss zweimal quadriert werden. */
+harden('wurzelgl', 'grund', 5, function (d) {
+  if (d >= 8 && coin(0.5)) {
+    /* √(x+a) + √(x+b) = c  — beide Wurzeln gehen auf */
+    const x0 = ri(0, 12);
+    let p = ri(1, 9), q = ri(1, 9);
+    if (p === q) q = p + 1;
+    const a = p * p - x0, b = q * q - x0, c = p + q;
+    return {
+      promptHTML: '<span class="big">' + sqrtHTML(polyHTML([1, a])) + ' <span class="op">+</span> '
+        + sqrtHTML(polyHTML([1, b])) + ' <span class="rel">=</span> ' + c + '</span>',
+      fields: [Fset(1)], flags: FLAG_EMPTY, check: checkNums([x0]), solHTML: setHTML([x0]),
+      plot: {
+        fns: [{ f: x => Math.sqrt(x + a) + Math.sqrt(x + b), label: 'linke Seite' }],
+        hlines: [{ y: c }], points: [{ x: x0, y: c }]
+      },
+      steps: [
+        st('Eine Wurzel isolieren', sqrtHTML(polyHTML([1, a])) + ' = ' + c + ' − ' + sqrtHTML(polyHTML([1, b]))),
+        st('Erstes Quadrieren', polyHTML([1, a]) + ' = ' + (c * c) + ' − ' + (2 * c) + '·'
+          + sqrtHTML(polyHTML([1, b])) + ' + ' + polyHTML([1, b])),
+        st('Wurzel wieder isolieren', (2 * c) + '·' + sqrtHTML(polyHTML([1, b])) + ' = ' + num(c * c + b - a)),
+        st('Zweites Quadrieren', polyHTML([1, b]) + ' = ' + fracHTML(num(c * c + b - a), 2 * c) + '² = ' + (q * q)),
+        st('Auflösen', V() + ' = ' + (q * q) + addHTML(-b) + ' = <b>' + x0 + '</b>'),
+        st('Probe', sqrtHTML(x0 + a) + ' + ' + sqrtHTML(x0 + b) + ' = ' + p + ' + ' + q + ' = ' + c + ' ✓')
+      ]
+    };
+  }
+  /* √(ax+b) = cx+d — quadrieren, quadratisch loesen, Scheinloesung pruefen */
+  const x0 = ri(0, 8);
+  const c = rnz(-2, 3), dd = rnz(-6, 8);
+  const rhs = c * x0 + dd;
+  if (rhs < 0) return null;
+  const a = rnz(-6, 6);
+  const b = rhs * rhs - a * x0;
+  /* (cx+d)² = ax+b  →  c²x² + (2cd−a)x + d²−b = 0 */
+  const A = c * c, B = 2 * c * dd - a, C = dd * dd - b;
+  if (A === 0) return null;
+  const disc = B * B - 4 * A * C;
+  if (disc < 0) return null;
+  const w = Math.sqrt(disc);
+  if (Math.abs(w - Math.round(w)) > 1e-9) return null;
+  const r1 = (-B - w) / (2 * A), r2 = (-B + w) / (2 * A);
+  const gueltig = uniqSorted([r1, r2].filter(x =>
+    a * x + b >= -1e-9 && c * x + dd >= -1e-9
+    && Math.abs(Math.sqrt(Math.max(0, a * x + b)) - (c * x + dd)) < 1e-7), 1e-7);
+  if (!gueltig.length || gueltig.some(x => !isNice(x))) return null;
+  const raus = uniqSorted([r1, r2], 1e-7).filter(x => gueltig.every(g => Math.abs(g - x) > 1e-7));
+  return {
+    promptHTML: '<span class="big">' + sqrtHTML(polyHTML([a, b])) + ' <span class="rel">=</span> '
+      + polyHTML([c, dd]) + '</span>',
+    fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums(gueltig), solHTML: setHTML(gueltig),
+    plot: {
+      fns: [{ f: x => Math.sqrt(a * x + b), label: 'linke Seite' }, { f: x => c * x + dd, label: 'rechte Seite', color: 2 }],
+      points: gueltig.map(x => ({ x: x, y: c * x + dd }))
+    },
+    steps: [
+      st('Bedingung', 'Eine Wurzel ist nie negativ: ' + polyHTML([c, dd]) + ' ≥ 0 muss gelten.'),
+      st('Quadrieren', polyHTML([a, b]) + ' = (' + polyHTML([c, dd]) + ')² = ' + polyHTML([A, 2 * c * dd, dd * dd])),
+      st('Sortieren', polyHTML([A, B, C]) + ' = 0'),
+      st('Lösen', 'x<sub>1</sub> = ' + valHTML(r1) + ', x<sub>2</sub> = ' + valHTML(r2)),
+      st(raus.length ? 'Probe — eine Scheinlösung' : 'Probe',
+        raus.length ? valHTML(raus[0]) + ' erfüllt die Bedingung nicht und fällt weg.'
+          : 'Beide Werte bestehen die Probe.'),
+      st('Ergebnis', setHTML(gueltig))
+    ]
+  };
+});
+
+/* ============================================================
+   BETRAGSGLEICHUNGEN
+   ============================================================ */
+
+/* Zwei Beträge in einer Summe — drei Fälle statt zwei. */
+harden('betrag', 'grund', 7, function (d) {
+  const a = rnz(-9, 9);
+  const b = a + ri(2, 10);
+  const c = (b - a) + 2 * ri(1, 6);          /* groesser als der Abstand → zwei Loesungen */
+  const x1 = new F(a + b - c, 2), x2 = new F(a + b + c, 2);
+  const sol = uniqSorted([x1.v, x2.v], 1e-9);
+  return {
+    promptHTML: '<span class="big"><span class="bars">' + polyHTML([1, -a]) + '</span> <span class="op">+</span> '
+      + '<span class="bars">' + polyHTML([1, -b]) + '</span> <span class="rel">=</span> ' + c + '</span>',
+    fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums(sol), solHTML: setHTML(sol),
+    plot: {
+      fns: [{ f: x => Math.abs(x - a) + Math.abs(x - b), label: 'linke Seite' }],
+      hlines: [{ y: c }], points: sol.map(x => ({ x: x, y: c }))
+    },
+    steps: [
+      st('Die Nullstellen der Beträge', V() + ' = ' + num(a) + ' und ' + V() + ' = ' + num(b)
+        + ' zerlegen die Zahlengerade in <b>drei</b> Abschnitte.'),
+      st('Abschnitt links', V() + ' &lt; ' + num(a) + ': beide Beträge werden negativ aufgelöst → '
+        + num(a + b) + ' − 2' + V() + ' = ' + c + ' → ' + V() + ' = <b>' + x1.html() + '</b>'),
+      st('Abschnitt Mitte', num(a) + ' ≤ ' + V() + ' ≤ ' + num(b) + ': dort ist die Summe konstant '
+        + (b - a) + ' — wegen ' + (b - a) + ' ≠ ' + c + ' gibt es hier keine Lösung.'),
+      st('Abschnitt rechts', V() + ' &gt; ' + num(b) + ': 2' + V() + addHTML(-(a + b)) + ' = ' + c
+        + ' → ' + V() + ' = <b>' + x2.html() + '</b>'),
+      st('Ergebnis', setHTML(sol))
+    ]
+  };
+});
+
+/* ============================================================
+   QUADRATISCHE GLEICHUNGEN
+   ============================================================ */
+
+/* Nicht in Normalform — erst alles auf eine Seite bringen. */
+harden('quadratisch', 'pq', 5, function (d) {
+  const r1 = rnz(-(d <= 7 ? 8 : 14), d <= 7 ? 8 : 14), r2 = rnz(-(d <= 7 ? 8 : 14), d <= 7 ? 8 : 14);
+  const p = -(r1 + r2), q = r1 * r2;
+  /* x² + px + q = 0 wird auf beiden Seiten „verschmutzt" */
+  const sA = ri(1, 3), sB = rnz(-9, 9), sC = rnz(-15, 15);
+  const L = [1 + sA, p + sB, q + sC], R = [sA, sB, sC];
+  const sol = uniqSorted([r1, r2], 1e-9);
+  return {
+    promptHTML: '<span class="big">' + polyHTML(L) + ' <span class="rel">=</span> ' + polyHTML(R) + '</span>',
+    fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums(sol), solHTML: setHTML(sol),
+    plot: {
+      fns: [{ f: x => L[0] * x * x + L[1] * x + L[2], label: 'linke Seite' },
+      { f: x => R[0] * x * x + R[1] * x + R[2], label: 'rechte Seite', color: 2 }],
+      points: sol.map(x => ({ x: x, y: R[0] * x * x + R[1] * x + R[2] }))
+    },
+    steps: [
+      st('Alles auf eine Seite', polyHTML(L) + ' − (' + polyHTML(R) + ') = 0'),
+      st('Zusammenfassen', polyHTML([1, p, q]) + ' = 0 — jetzt steht die Normalform da.'),
+      st('pq-Formel', V() + '<sub>1,2</sub> = ' + valHTML(-p / 2) + ' ± '
+        + sqrtHTML('(' + valHTML(p / 2) + ')² − ' + paren(q))),
+      st('Ergebnis', setHTML(sol))
+    ]
+  };
+});
+
+/* ============================================================
+   POTENZGLEICHUNGEN
+   ============================================================ */
+
+/* Negative und gebrochene Exponenten — der Kehrwert muss mitgedacht werden. */
+harden('potenz', 'rational', 6, function (d) {
+  const base = pick([2, 3, 4, 5, 6, 7, 9, 10]);
+  const nn = pick([2, 3]), mm = pick([1, 2, 3, 4, 5]);
+  if (mm === nn || gcd(mm, nn) !== 1) return null;    /* 4/2 waere in Wahrheit 2 */
+  const neg = coin(0.55);
+  const x0 = Math.pow(base, nn);
+  const rhs = Math.pow(base, neg ? -mm : mm);
+  if (rhs < 1e-6) return null;
+  const expHTML = (neg ? MINUS : '') + fracHTML(mm, nn);
+  const rhsHTML = neg ? fracHTML(1, Math.pow(base, mm)) : '' + Math.pow(base, mm);
+  return {
+    promptHTML: '<span class="big">' + V() + '<sup>' + expHTML + '</sup> <span class="rel">=</span> '
+      + rhsHTML + '</span>',
+    qtext: 'Es gilt x &gt; 0.',
+    fields: [Fnum()], check: checkNum(x0), solHTML: V() + ' = ' + x0,
+    steps: [
+      neg ? st('Negativer Exponent', V() + '<sup>' + MINUS + fracHTML(mm, nn) + '</sup> = '
+        + fracHTML(1, V() + '<sup>' + fracHTML(mm, nn) + '</sup>') + ' — also den Kehrwert bilden.')
+        : st('Gebrochener Exponent', V() + '<sup>' + fracHTML(mm, nn) + '</sup> = '
+          + sqrtHTML(V() + '<sup>' + mm + '</sup>', nn)),
+      st('Beide Seiten hoch ' + (neg ? MINUS : '') + nn + '/' + mm,
+        V() + ' = (' + rhsHTML + ')<sup>' + (neg ? MINUS : '') + fracHTML(nn, mm) + '</sup>'),
+      st('Ausrechnen', rhsHTML + ' = ' + base + '<sup>' + (neg ? MINUS : '') + mm + '</sup>, also '
+        + V() + ' = ' + base + '<sup>' + nn + '</sup> = <b>' + x0 + '</b>'),
+      st('Probe', x0 + '<sup>' + expHTML + '</sup> = ' + rhsHTML + ' ✓')
+    ]
+  };
+});
+
+/* ============================================================
+   TERME VEREINFACHEN
+   ============================================================ */
+
+/* Kürzen geht erst nach dem Faktorisieren — binomische Formeln rückwärts. */
+harden('vereinfachen', 'kuerzen', 5, function (d) {
+  const a = rnz(-9, 9);
+  const art = d >= 9 ? pick(['bin3', 'bin2', 'faktor', 'vieta', 'vieta', 'bin3s', 'kubik'])
+    : (d >= 7 ? pick(['bin3', 'bin2', 'faktor', 'vieta', 'vieta']) : pick(['bin3', 'bin2', 'vieta']));
+
+  if (art === 'vieta') {
+    /* (x² + (p+q)x + pq) / (x + q) = x + p — Satz von Vieta rueckwaerts */
+    const p = rnz(-9, 9), q = rnz(-9, 9);
+    if (p === q) return null;
+    const ref = x => (x * x + (p + q) * x + p * q) / (x + q);
+    const lo = Math.abs(q) + 0.6;
+    return {
+      promptHTML: '<span class="big">' + fracHTML(polyHTML([1, p + q, p * q]), polyHTML([1, q])) + '</span>',
+      qtext: 'Kürze so weit wie möglich.',
+      fields: [Fexpr('=', 'z. B. x - 3')], check: checkExpr(ref, { lo: lo, hi: lo + 2.8 }),
+      solHTML: polyHTML([1, p]),
+      steps: [
+        st('Nullstellen des Zählers', 'Gesucht sind zwei Zahlen mit der Summe ' + num(p + q) + ' und dem Produkt '
+          + num(p * q) + ' → ' + num(p) + ' und ' + num(q) + '.'),
+        st('Faktorisieren', polyHTML([1, p + q, p * q]) + ' = (' + polyHTML([1, p]) + ')(' + polyHTML([1, q]) + ')'),
+        st('Kürzen', 'Der Faktor ' + paren(polyHTML([1, q])) + ' steht oben und unten.'),
+        st('Ergebnis', '<b>' + polyHTML([1, p]) + '</b>')
+      ]
+    };
+  }
+  if (art === 'bin3s') {
+    /* (k²x² − a²) / (kx + a) = kx − a — dritte binomische Formel mit Vorfaktor */
+    const k = ri(2, 5);
+    const ref = x => (k * k * x * x - a * a) / (k * x + a);
+    const lo = Math.abs(a) / k + 0.7;
+    return {
+      promptHTML: '<span class="big">' + fracHTML(polyHTML([k * k, 0, -a * a]), polyHTML([k, a])) + '</span>',
+      qtext: 'Kürze so weit wie möglich.',
+      fields: [Fexpr('=', 'z. B. 2x - 3')], check: checkExpr(ref, { lo: lo, hi: lo + 2.6 }),
+      solHTML: polyHTML([k, -a]),
+      steps: [
+        st('Zähler erkennen', polyHTML([k * k, 0, -a * a]) + ' = (' + k + V() + ')² − ' + (a * a)
+          + ' — also a² − b² mit a = ' + k + V() + ' und b = ' + Math.abs(a) + '.'),
+        st('Faktorisieren', '(' + polyHTML([k, a]) + ')(' + polyHTML([k, -a]) + ')'),
+        st('Kürzen', 'Der Faktor ' + paren(polyHTML([k, a])) + ' fällt weg.'),
+        st('Ergebnis', '<b>' + polyHTML([k, -a]) + '</b>')
+      ]
+    };
+  }
+  if (art === 'kubik') {
+    /* (x³ − a³) / (x − a) = x² + ax + a² */
+    const b = ri(1, 6) * (coin(0.5) ? 1 : -1);
+    const ref = x => (x * x * x - b * b * b) / (x - b);
+    const lo = Math.abs(b) + 0.6;
+    return {
+      promptHTML: '<span class="big">' + fracHTML(polyHTML([1, 0, 0, -b * b * b]), polyHTML([1, -b])) + '</span>',
+      qtext: 'Kürze so weit wie möglich.',
+      fields: [Fexpr('=', 'z. B. x^2 + 2x + 4')], check: checkExpr(ref, { lo: lo, hi: lo + 2.4 }),
+      solHTML: polyHTML([1, b, b * b]),
+      steps: [
+        st('Nullstelle raten', 'Für ' + V() + ' = ' + num(b) + ' wird der Zähler 0 — also ist ' + paren(polyHTML([1, -b]))
+          + ' ein Faktor.'),
+        st('Polynomdivision', '(' + polyHTML([1, 0, 0, -b * b * b]) + ') : (' + polyHTML([1, -b]) + ') = '
+          + polyHTML([1, b, b * b])),
+        st('Ergebnis', '<b>' + polyHTML([1, b, b * b]) + '</b>')
+      ]
+    };
+  }
+  if (art === 'bin3') {
+    /* (x² − a²) / (x + a) = x − a */
+    const ref = x => (x * x - a * a) / (x + a);
+    return {
+      promptHTML: '<span class="big">' + fracHTML(polyHTML([1, 0, -a * a]), polyHTML([1, a])) + '</span>',
+      qtext: 'Kürze so weit wie möglich.',
+      fields: [Fexpr('=', 'z. B. x - 3')], check: checkExpr(ref, { lo: 0.7, hi: 2.9 }),
+      solHTML: polyHTML([1, -a]),
+      steps: [
+        st('Zähler faktorisieren', polyHTML([1, 0, -a * a]) + ' = (' + polyHTML([1, a]) + ')(' + polyHTML([1, -a])
+          + ') — dritte binomische Formel.'),
+        st('Kürzen', 'Der Faktor ' + paren(polyHTML([1, a])) + ' steht oben und unten.'),
+        st('Ergebnis', '<b>' + polyHTML([1, -a]) + '</b>')
+      ]
+    };
+  }
+  if (art === 'bin2') {
+    /* (x² − 2ax + a²) / (x − a) = x − a */
+    const ref = x => (x * x - 2 * a * x + a * a) / (x - a);
+    return {
+      promptHTML: '<span class="big">' + fracHTML(polyHTML([1, -2 * a, a * a]), polyHTML([1, -a])) + '</span>',
+      qtext: 'Kürze so weit wie möglich.',
+      fields: [Fexpr('=', 'z. B. x - 3')], check: checkExpr(ref, { lo: Math.abs(a) + 0.6, hi: Math.abs(a) + 3.2 }),
+      solHTML: polyHTML([1, -a]),
+      steps: [
+        st('Zähler faktorisieren', polyHTML([1, -2 * a, a * a]) + ' = (' + polyHTML([1, -a]) + ')² — zweite binomische Formel.'),
+        st('Kürzen', fracHTML('(' + polyHTML([1, -a]) + ')²', polyHTML([1, -a])) + ' = ' + polyHTML([1, -a])),
+        st('Ergebnis', '<b>' + polyHTML([1, -a]) + '</b>')
+      ]
+    };
+  }
+  /* (ax² + bx) / (cx + d) mit gemeinsamem Faktor: ausklammern, dann kürzen */
+  const k = rnz(2, 6), b = rnz(-8, 8);
+  const ref = x => (k * x * x + k * b * x) / (x + b);
+  return {
+    promptHTML: '<span class="big">' + fracHTML(polyHTML([k, k * b, 0]), polyHTML([1, b])) + '</span>',
+    qtext: 'Kürze so weit wie möglich.',
+    fields: [Fexpr('=', 'z. B. 3x')], check: checkExpr(ref, { lo: Math.abs(b) + 0.6, hi: Math.abs(b) + 3.4 }),
+    solHTML: coefHTML(k, V(), true),
+    steps: [
+      st('Ausklammern', polyHTML([k, k * b, 0]) + ' = ' + coefHTML(k, V(), true) + '·(' + polyHTML([1, b]) + ')'),
+      st('Kürzen', 'Der Faktor ' + paren(polyHTML([1, b])) + ' fällt weg.'),
+      st('Ergebnis', '<b>' + coefHTML(k, V(), true) + '</b>')
+    ]
+  };
+});
+
+/* ============================================================
+   BRUCHGLEICHUNGEN — Hauptnenner statt Kreuzmultiplikation
+   ============================================================ */
+
+/* Ab Stufe 6 steht der Hauptnenner nicht mehr da, er muss erst gebildet
+   werden — und ab Stufe 8 versteckt er sich hinter der dritten
+   binomischen Formel: x² − 9 ist (x−3)(x+3). */
+/* Plus- oder Minuszeichen zwischen zwei Bruechen — nie „+ −5/…" */
+function fracOp(v) { return '<span class="op">' + (v < 0 ? MINUS : '+') + '</span>'; }
+
+function bruchHart(d, mitQuad) {
+  const u = rnz(-8, 8);
+  let w = rnz(-8, 8);
+  for (let i = 0; i < 20 && w === u; i++) w = rnz(-8, 8);
+  if (w === u) return null;
+
+  if (mitQuad && d >= 8) {
+    /* a/(x−m) + b/(x+m) = c/(x²−m²) — Hauptnenner ist die dritte binom. Formel */
+    const m = ri(2, 9);
+    const a = rnz(-6, 6), b = rnz(-6, 6);
+    if (a + b === 0) return null;                    /* sonst faellt x heraus */
+    let x0 = rnz(-14, 14);
+    for (let i = 0; i < 20 && Math.abs(x0) === m; i++) x0 = rnz(-14, 14);
+    if (Math.abs(x0) === m) return null;
+    const c = (a + b) * x0 + (a - b) * m;            /* so geht die Gleichung auf */
+    if (Math.abs(c) > 300) return null;
+    const nenner = polyHTML([1, 0, -m * m]);
+    return {
+      promptHTML: '<span class="big">' + fracHTML(num(a), polyHTML([1, -m])) + ' ' + fracOp(b)
+        + ' ' + fracHTML(num(Math.abs(b)), polyHTML([1, m])) + ' <span class="rel">=</span> '
+        + fracHTML(num(c), nenner) + '</span>',
+      fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums([x0]), solHTML: setHTML([x0]),
+      steps: [
+        st('Nenner faktorisieren', nenner + ' = (' + polyHTML([1, -m]) + ')(' + polyHTML([1, m])
+          + ') — dritte binomische Formel. Das ist der Hauptnenner.'),
+        st('Definitionsmenge', V() + ' ≠ ' + m + ' und ' + V() + ' ≠ ' + num(-m)),
+        st('Mit dem Hauptnenner multiplizieren', num(a) + '·(' + polyHTML([1, m]) + ')'
+          + addHTML(num(b) + '·(' + polyHTML([1, -m]) + ')') + ' = ' + num(c)),
+        st('Ausmultiplizieren', polyHTML([a + b, (a - b) * m]) + ' = ' + num(c)),
+        st('Auflösen', polyHTML([a + b, 0]) + ' = ' + num(c - (a - b) * m) + ' → ' + V() + ' = <b>' + num(x0) + '</b>'),
+        st('Probe', V() + ' = ' + num(x0) + ' liegt in der Definitionsmenge ✓'),
+        st('Ergebnis', setHTML([x0]))
+      ]
+    };
+  }
+
+  /* a/(x+u) + b/(x+w) = c  →  Hauptnenner (x+u)(x+w), quadratische Gleichung.
+     a und b werden aus den gewuenschten Loesungen zurueckgerechnet — das geht
+     nicht bei jeder Kombination auf, deshalb mehrere Anlaeufe. */
+  let r1, r2, c, S, P, a, b;
+  let ok = false;
+  for (let versuch = 0; versuch < 40 && !ok; versuch++) {
+    r1 = rnz(-9, 9); r2 = rnz(-9, 9); c = rnz(-4, 4);
+    if (r1 === r2 || r1 === -u || r1 === -w || r2 === -u || r2 === -w) continue;
+    S = -c * (r1 + r2); P = c * r1 * r2;             /* Zielpolynom c·x² + S·x + P */
+    /* c(x²+(u+w)x+uw) − (a+b)x − (a·w + b·u) = c x² + S x + P */
+    const ab = c * (u + w) - S;                      /* a + b */
+    const konst = c * u * w - P;                     /* a·w + b·u */
+    if ((konst - ab * u) % (w - u) !== 0) continue;
+    a = (konst - ab * u) / (w - u); b = ab - a;
+    if (!a || !b || Math.abs(a) > 90 || Math.abs(b) > 90) continue;
+    ok = true;
+  }
+  if (!ok) return null;
+  const sol = uniqSorted([r1, r2], 1e-9);
+  return {
+    promptHTML: '<span class="big">' + fracHTML(num(a), polyHTML([1, u])) + ' ' + fracOp(b) + ' '
+      + fracHTML(num(Math.abs(b)), polyHTML([1, w])) + ' <span class="rel">=</span> ' + num(c) + '</span>',
+    fields: [Fset(2)], flags: FLAG_EMPTY, check: checkNums(sol), solHTML: setHTML(sol),
+    steps: [
+      st('Definitionsmenge', V() + ' ≠ ' + num(-u) + ' und ' + V() + ' ≠ ' + num(-w)),
+      st('Hauptnenner', '(' + polyHTML([1, u]) + ')(' + polyHTML([1, w]) + ') = ' + polyHTML([1, u + w, u * w])),
+      st('Beide Seiten multiplizieren', num(a) + '·(' + polyHTML([1, w]) + ')' + addHTML(num(b) + '·(' + polyHTML([1, u]) + ')')
+        + ' = ' + num(c) + '·(' + polyHTML([1, u + w, u * w]) + ')'),
+      st('Sortieren', polyHTML([c, S, P]) + ' = 0'),
+      st('Lösen', V() + '<sub>1</sub> = ' + num(r1) + ', ' + V() + '<sub>2</sub> = ' + num(r2)
+        + ' — beide liegen in der Definitionsmenge.'),
+      st('Ergebnis', setHTML(sol))
+    ]
+  };
+}
+harden('bruchgl', 'summe', 6, function (d) { return bruchHart(d, false); });
+harden('bruchgl', 'kombi', 6, function (d) { return bruchHart(d, true); });
+
+/* ============================================================
+   INTEGRALE — Substitution mit nicht-linearer innerer Funktion
+   ============================================================ */
+
+/* Bis Stufe 5 ist die innere Funktion linear, der Korrekturfaktor also nur
+   eine Zahl. Ab Stufe 6 steht die innere Ableitung als Faktor im Integranden
+   und muss erst erkannt werden. */
+harden('integral', 'subst', 6, function (d) {
+  const kind = pick(d >= 8 ? ['pot', 'exp', 'ln'] : ['pot', 'pot', 'exp']);
+  const a = pick([1, 1, 2, 3]), b = rnz(1, 9);
+  if (kind === 'pot') {
+    /* ∫ c·x·(a x² + b)^n dx */
+    const n = ri(2, d <= 8 ? 3 : 4), c = rnz(-6, 6);
+    const fak = new F(c, 2 * a * (n + 1));
+    const ref = x => fak.v * Math.pow(a * x * x + b, n + 1);
+    const inner = polyHTML([a, 0, b]);
+    return {
+      promptHTML: intPrompt(coefHTML(c, V(), true) + '·(' + inner + ')<sup>' + n + '</sup>'),
+      qtext: 'Gib eine Stammfunktion an. Das C darf entfallen.',
+      fields: [Fexpr('F(<i>x</i>) =', 'z. B. (x^2+1)^3/6')], check: checkAnti(ref, 0.3, 1.7),
+      solHTML: 'F(' + V() + ') = ' + fak.html() + '·(' + inner + ')<sup>' + (n + 1) + '</sup> + C',
+      steps: [
+        st('Innere Funktion', 'u = ' + inner + ' → u′ = ' + num(2 * a) + V()),
+        st('Faktor erkennen', 'Im Integranden steht ' + coefHTML(c, V(), true) + ' — das ist '
+          + fracHTML(num(c), num(2 * a)) + '·u′. Die Substitution geht auf.'),
+        st('Integrieren', '∫u<sup>' + n + '</sup> du = ' + fracHTML('u<sup>' + (n + 1) + '</sup>', n + 1)),
+        st('Rücksubstitution', 'F(' + V() + ') = <b>' + fak.html() + '·(' + inner + ')<sup>' + (n + 1) + '</sup></b> + C')
+      ]
+    };
+  }
+  if (kind === 'exp') {
+    /* ∫ c·x·e^(a x² + b) dx */
+    const c = rnz(-6, 6);
+    const fak = new F(c, 2 * a);
+    const inner = polyHTML([a, 0, b]);
+    const ref = x => fak.v * Math.exp(a * x * x + b);
+    return {
+      promptHTML: intPrompt(coefHTML(c, V(), true) + '·e<sup>' + inner + '</sup>'),
+      qtext: 'Gib eine Stammfunktion an. Das C darf entfallen.',
+      fields: [Fexpr('F(<i>x</i>) =', 'z. B. e^(x^2)/2')], check: checkAnti(ref, 0.2, 1.2),
+      solHTML: 'F(' + V() + ') = ' + fak.html() + '·e<sup>' + inner + '</sup> + C',
+      steps: [
+        st('Innere Funktion', 'u = ' + inner + ' → u′ = ' + num(2 * a) + V()),
+        st('Faktor erkennen', coefHTML(c, V(), true) + ' = ' + fracHTML(num(c), num(2 * a)) + '·u′'),
+        st('Integrieren', '∫e<sup>u</sup> du = e<sup>u</sup>'),
+        st('Rücksubstitution', 'F(' + V() + ') = <b>' + fak.html() + '·e<sup>' + inner + '</sup></b> + C')
+      ]
+    };
+  }
+  /* ∫ (2ax + p)/(a x² + p x + q) dx = ln|…| — Zaehler ist die Ableitung des Nenners */
+  const p = rnz(-6, 6), q = ri(4, 12) + Math.ceil(p * p / (4 * a));
+  const inner = polyHTML([a, p, q]);
+  const ref = x => Math.log(Math.abs(a * x * x + p * x + q));
+  return {
+    promptHTML: intPrompt(fracHTML(polyHTML([2 * a, p]), inner)),
+    qtext: 'Gib eine Stammfunktion an. Das C darf entfallen.',
+    fields: [Fexpr('F(<i>x</i>) =', 'z. B. ln(x^2+1)')], check: checkAnti(ref, -1.2, 1.4),
+    solHTML: 'F(' + V() + ') = ln|' + inner + '| + C',
+    steps: [
+      st('Nenner ableiten', '(' + inner + ')′ = ' + polyHTML([2 * a, p]) + ' — genau der Zähler.'),
+      st('Grundintegral', '∫' + fracHTML('u′', 'u') + ' dx = ln|u|'),
+      st('Ergebnis', 'F(' + V() + ') = <b>ln|' + inner + '|</b> + C')
+    ]
+  };
+});
+
+/* ============================================================
+   KETTENREGEL — verschachtelt statt nur linear innen
+   ============================================================ */
+
+harden('ableitung', 'kette', 7, function (d) {
+  const kind = pick(d >= 9 ? ['quad', 'wurzel', 'expquad', 'doppelt'] : ['quad', 'wurzel', 'expquad']);
+  const a = rnz(-4, 4), b = rnz(-6, 6);
+  if (kind === 'quad') {
+    /* f(x) = (a x² + b x + c)^n */
+    const c = rnz(-6, 6), n = ri(2, d <= 8 ? 3 : 4);
+    const g = x => a * x * x + b * x + c, dg = x => 2 * a * x + b;
+    const df = x => n * Math.pow(g(x), n - 1) * dg(x);
+    const inner = polyHTML([a, b, c]);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = (' + inner + ')<sup>' + n + '</sup></span>',
+      qtext: 'Bestimme f′(x).',
+      fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: 0.4, hi: 2.2 }), _f: x => Math.pow(g(x), n),
+      solHTML: 'f′(' + V() + ') = ' + n + '·(' + polyHTML([2 * a, b]) + ')·(' + inner + ')<sup>' + (n - 1) + '</sup>',
+      steps: [
+        st('Innere Funktion', 'g(' + V() + ') = ' + inner + ' → g′(' + V() + ') = ' + polyHTML([2 * a, b])),
+        st('Äußere Ableitung', n + '·g<sup>' + (n - 1) + '</sup>'),
+        st('Kettenregel', 'f′ = ' + n + '·(' + inner + ')<sup>' + (n - 1) + '</sup> · (' + polyHTML([2 * a, b]) + ')'),
+        st('Ergebnis', '<b>' + n + '·(' + polyHTML([2 * a, b]) + ')·(' + inner + ')<sup>' + (n - 1) + '</sup></b>')
+      ]
+    };
+  }
+  if (kind === 'wurzel') {
+    /* f(x) = √(a x² + b) mit a > 0 — Wurzel als Potenz schreiben */
+    const A = Math.abs(a) || 2, B = ri(1, 9);
+    const g = x => A * x * x + B;
+    const df = x => (A * x) / Math.sqrt(g(x));
+    const inner = polyHTML([A, 0, B]);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = ' + sqrtHTML(inner) + '</span>',
+      qtext: 'Bestimme f′(x).',
+      fields: [Fexpr('f′(<i>x</i>) =', 'z. B. x/sqrt(x^2+1)')], check: checkExpr(df, { lo: 0.3, hi: 2.4 }),
+      _f: x => Math.sqrt(g(x)),
+      solHTML: 'f′(' + V() + ') = ' + fracHTML(coefHTML(A, V(), true), sqrtHTML(inner)),
+      steps: [
+        st('Als Potenz schreiben', 'f(' + V() + ') = (' + inner + ')<sup>1/2</sup>'),
+        st('Innere Ableitung', '(' + inner + ')′ = ' + coefHTML(2 * A, V(), true)),
+        st('Kettenregel', 'f′ = ' + fracHTML('1', '2') + '·(' + inner + ')<sup>−1/2</sup> · ' + coefHTML(2 * A, V(), true)),
+        st('Ergebnis', '<b>' + fracHTML(coefHTML(A, V(), true), sqrtHTML(inner)) + '</b>')
+      ]
+    };
+  }
+  if (kind === 'expquad') {
+    /* f(x) = c·e^(a x² + b x) */
+    const c = rnz(-4, 4), A = a || 2;
+    const g = x => A * x * x + b * x;
+    const df = x => c * (2 * A * x + b) * Math.exp(g(x));
+    const inner = polyHTML([A, b, 0]);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = ' + coefHTML(c, 'e<sup>' + inner + '</sup>', true) + '</span>',
+      qtext: 'Bestimme f′(x).',
+      fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: 0.15, hi: 1.05 }), _f: x => c * Math.exp(g(x)),
+      solHTML: 'f′(' + V() + ') = ' + num(c) + '·(' + polyHTML([2 * A, b]) + ')·e<sup>' + inner + '</sup>',
+      steps: [
+        st('Innere Funktion', 'g(' + V() + ') = ' + inner + ' → g′(' + V() + ') = ' + polyHTML([2 * A, b])),
+        st('Äußere bleibt', 'e<sup>g</sup> abgeleitet ist wieder e<sup>g</sup>.'),
+        st('Ergebnis', '<b>' + num(c) + '·(' + polyHTML([2 * A, b]) + ')·e<sup>' + inner + '</sup></b>')
+      ]
+    };
+  }
+  /* doppelt verschachtelt: f(x) = ((a x + b)² + c)^n */
+  const c = ri(1, 6), n = ri(2, 3), A = a || 2;
+  const g1 = x => A * x + b, g = x => g1(x) * g1(x) + c;
+  const df = x => n * Math.pow(g(x), n - 1) * 2 * g1(x) * A;
+  const innen = '(' + polyHTML([A, b]) + ')² ' + (c >= 0 ? '+ ' + c : '− ' + (-c));
+  return {
+    promptHTML: '<span class="big">f(' + V() + ') = (' + innen + ')<sup>' + n + '</sup></span>',
+    qtext: 'Bestimme f′(x). Hier liegt eine Kette in der Kette.',
+    fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: 0.4, hi: 1.9 }), _f: x => Math.pow(g(x), n),
+    solHTML: 'f′(' + V() + ') = ' + num(2 * n * A) + '·(' + polyHTML([A, b]) + ')·(' + innen + ')<sup>' + (n - 1) + '</sup>',
+    steps: [
+      st('Von außen nach innen', 'äußere: u<sup>' + n + '</sup> · mittlere: v² ' + (c >= 0 ? '+ ' + c : '− ' + (-c))
+        + ' · innere: ' + polyHTML([A, b])),
+      st('Erste Ableitung', n + '·(' + innen + ')<sup>' + (n - 1) + '</sup>'),
+      st('Zweite Stufe', '(' + innen + ')′ = 2·(' + polyHTML([A, b]) + ')·' + paren(A)),
+      st('Ergebnis', '<b>' + num(2 * n * A) + '·(' + polyHTML([A, b]) + ')·(' + innen + ')<sup>' + (n - 1) + '</sup></b>')
+    ]
+  };
+});
+
+</script>
+<script>
+/* ============================================================
+   TEIL 12 — Struktur statt groesserer Zahlen (Teil 2)
+   ============================================================
+   Analysis, mehrdimensionale Analysis, lineare Algebra und
+   Stochastik: bisher wuchsen auch hier mit der Stufe fast nur die
+   Zahlen. Was diese Gebiete in einer Klausur schwer macht, ist etwas
+   anderes — ein Term muss erst faktorisiert, konjugiert erweitert oder
+   ausgeklammert werden; eine Determinante entwickelt; ein Ereignis
+   zerlegt; eine Wahrscheinlichkeit umgekehrt (Bayes).
+
+   Wie in Teil 11 ersetzt jede Funktion ab einer bestimmten Stufe die
+   bisherige Bauform, darunter bleibt alles wie es war.
+   ============================================================ */
+
+/* ---------- Helfer ---------- */
+
+/* Zwei Wuerfel: alle 36 Paare, damit jede Anzahl wirklich gezaehlt und
+   nicht geschaetzt wird. */
+function wuerfelPaare() {
+  const out = [];
+  for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) out.push([a, b]);
+  return out;
+}
+const W_EREIG = [
+  { t: 'die Augensumme ist gerade', f: p => (p[0] + p[1]) % 2 === 0 },
+  { t: 'die Augensumme ist größer als 8', f: p => p[0] + p[1] > 8 },
+  { t: 'die Augensumme ist kleiner als 6', f: p => p[0] + p[1] < 6 },
+  { t: 'beide Würfel zeigen dieselbe Zahl', f: p => p[0] === p[1] },
+  { t: 'mindestens ein Würfel zeigt eine Sechs', f: p => p[0] === 6 || p[1] === 6 },
+  { t: 'mindestens ein Würfel zeigt eine gerade Zahl', f: p => p[0] % 2 === 0 || p[1] % 2 === 0 },
+  { t: 'die Augensumme ist durch 3 teilbar', f: p => (p[0] + p[1]) % 3 === 0 },
+  { t: 'das Produkt der Augenzahlen ist größer als 12', f: p => p[0] * p[1] > 12 },
+];
+
+/* Fakultaet als Produkt ausgeschrieben: 5! = 5·4·3·2·1 */
+function faktHTML(n) {
+  const t = [];
+  for (let i = n; i >= 1; i--) t.push(i);
+  return t.join('·');
+}
+
+/* ============================================================
+   STOCHASTIK · WAHRSCHEINLICHKEIT
+   ============================================================ */
+
+/* Zwei Ereignisse statt einem: erst ab der Vereinigung braucht man den
+   Additionssatz und muss die Schnittmenge abziehen. */
+harden('wahrsch', 'laplace', 5, function (d) {
+  const alle = wuerfelPaare();
+  let iA = ri(0, W_EREIG.length - 1), iB = ri(0, W_EREIG.length - 1);
+  if (iA === iB) return null;
+  const A = W_EREIG[iA], B = W_EREIG[iB];
+  const nA = alle.filter(A.f).length, nB = alle.filter(B.f).length;
+  const nAB = alle.filter(p => A.f(p) && B.f(p)).length;
+  const nUnion = alle.filter(p => A.f(p) || B.f(p)).length;
+  if (nAB === 0 || nAB === nA || nAB === nB) return null;    /* sonst ist nichts abzuziehen */
+  const frage = d >= 8 && coin(0.4) ? 'schnitt' : 'union';
+  const g = frage === 'union' ? nUnion : nAB;
+  const p = new F(g, 36);
+  return {
+    promptHTML: '<span class="big">Zwei faire Würfel werden geworfen.<br>A: ' + A.t + '<br>B: ' + B.t
+      + '<br>Wie wahrscheinlich ist <b>' + (frage === 'union' ? 'A oder B (mindestens eines)' : 'A und B zugleich') + '</b>?</span>',
+    wordy: true, fields: [Fnum('P =', P_PH)], check: checkNum(p.v), solHTML: 'P = ' + pHTML(p),
+    steps: [
+      st('Mögliche Fälle', '6 · 6 = <b>36</b> Paare.'),
+      st('Die beiden Ereignisse zählen', 'A tritt in <b>' + nA + '</b> Fällen ein, B in <b>' + nB + '</b>.'),
+      st('Der Überschneidungsbereich', 'In <b>' + nAB + '</b> Fällen treten <b>beide</b> ein: P(A ∩ B) = ' + fracHTML(nAB, 36) + '.'),
+      frage === 'union'
+        ? st('Additionssatz', 'P(A ∪ B) = P(A) + P(B) − P(A ∩ B) = ' + fracHTML(nA, 36) + ' + ' + fracHTML(nB, 36)
+          + ' − ' + fracHTML(nAB, 36) + ' = ' + fracHTML(nUnion, 36)
+          + '<br><span class="muted">Ohne den Abzug würde man die ' + nAB + ' gemeinsamen Fälle doppelt zählen.</span>')
+        : st('Schnittmenge', 'Gefragt sind nur die Fälle, in denen <b>beides</b> gilt: ' + fracHTML(nAB, 36)),
+      st('Ergebnis', 'P = <b>' + pHTML(p) + '</b>')
+    ]
+  };
+});
+
+/* „Mindestens einmal" ist nur der erste Schritt — ab hier muessen mehrere
+   Summanden des Gegenereignisses abgezogen werden. */
+harden('wahrsch', 'gegen', 6, function (d) {
+  const n = d <= 7 ? ri(4, 6) : ri(5, 8);
+  const kind = pick(['wuerfel', 'muenze', 'urne', 'urne', 'urne']);
+  let p1, txt;
+  if (kind === 'wuerfel') { p1 = new F(1, 6); txt = 'Ein Würfel wird ' + n + '-mal geworfen.'; }
+  else if (kind === 'muenze') { p1 = new F(1, 2); txt = 'Eine faire Münze wird ' + n + '-mal geworfen.'; }
+  else {
+    const r = ri(1, 6), b = ri(2, 12);
+    p1 = new F(r, r + b);
+    txt = 'Aus einer Urne mit ' + r + ' roten und ' + b + ' blauen Kugeln wird ' + n + '-mal <b>mit Zurücklegen</b> gezogen.';
+  }
+  const q = new F(p1.d - p1.n, p1.d);
+  const k = d >= 8 ? pick([2, 3, 3]) : 2;                     /* mindestens k Treffer */
+  if (k >= n) return null;
+  let gegen = new F(0, 1);
+  const teile = [];
+  for (let i = 0; i < k; i++) {
+    const term = p1.pow(i).mul(q.pow(n - i)).mul(binom(n, i));
+    teile.push({ i: i, f: term });
+    gegen = gegen.add(term);
+  }
+  const res = new F(1, 1).sub(gegen);
+  if (res.d > 1e7) return null;
+  const wort = kind === 'muenze' ? 'Kopf' : (kind === 'wuerfel' ? 'eine Sechs' : 'eine rote Kugel');
+  return {
+    promptHTML: '<span class="big">' + txt + '<br>Wie wahrscheinlich ist <b>mindestens ' + (k === 2 ? 'zweimal' : 'dreimal')
+      + '</b> ' + wort + '?</span>',
+    wordy: true, fields: [Fnum('P =', P_PH)], check: checkNum(res.v), solHTML: 'P = ' + pHTML(res),
+    steps: [
+      st('Gegenereignis bilden', '„Mindestens ' + k + ' Treffer" ist das Gegenteil von „<b>höchstens ' + (k - 1)
+        + ' Treffer</b>" — und das sind ' + k + ' einzelne Fälle: 0 bis ' + (k - 1) + ' Treffer.'),
+      st('Einzelwahrscheinlichkeiten', 'p = ' + pHTML(p1) + ', also q = 1 − p = ' + pHTML(q) + '.'),
+      st('Die Fälle des Gegenereignisses', teile.map(t =>
+        'P(genau ' + t.i + ') = ' + binomHTML(n, t.i) + '·' + pHTML(p1) + '<sup>' + t.i + '</sup>·'
+        + pHTML(q) + '<sup>' + (n - t.i) + '</sup> = ' + pHTML(t.f)).join('<br>')),
+      st('Summe des Gegenereignisses', chainF(teile.map(t => t.f)) + ' = ' + pHTML(gegen)),
+      st('Ergebnis', 'P = 1 − ' + pHTML(gegen) + ' = <b>' + pHTML(res) + '</b>')
+    ]
+  };
+});
+
+/* Drei Stufen statt zwei — und ohne Zuruecklegen aendert sich der Nenner
+   in jedem Zug. */
+harden('wahrsch', 'pfad', 6, function (d) {
+  const r = ri(3, 10), b = ri(3, 10);
+  const N = r + b;
+  const zuege = 3;
+  if (N < 6) return null;
+  const mitZ = d <= 7 ? coin(0.7) : coin(0.35);
+  const kMin = 2;
+  /* P(genau k rote) bei drei Zuegen */
+  function pGenau(k) {
+    if (mitZ) return new F(binom(zuege, k), 1).mul(new F(r, N).pow(k)).mul(new F(b, N).pow(zuege - k));
+    /* hypergeometrisch */
+    return new F(binom(r, k) * binom(b, zuege - k), binom(N, zuege));
+  }
+  const genau2 = pGenau(2), genau3 = pGenau(3);
+  const res = genau2.add(genau3);
+  if (res.n === 0) return null;
+  return {
+    promptHTML: '<span class="big">In einer Urne liegen ' + r + ' rote und ' + b + ' blaue Kugeln.<br>Es wird <b>dreimal '
+      + (mitZ ? 'mit' : 'ohne') + ' Zurücklegen</b> gezogen.<br>Wie wahrscheinlich sind <b>mindestens ' + kMin
+      + ' rote</b> Kugeln?</span>',
+    wordy: true, fields: [Fnum('P =', P_PH)], check: checkNum(res.v), solHTML: 'P = ' + pHTML(res),
+    steps: [
+      st('Zerlegen', '„Mindestens 2 rote" heißt <b>genau 2</b> rote <b>oder</b> <b>genau 3</b> rote — zwei Fälle, die addiert werden.'),
+      mitZ
+        ? st('Genau 2 rote', 'Drei Pfade (rrb, rbr, brr): ' + binomHTML(3, 2) + '·' + fracHTML(r, N) + '<sup>2</sup>·'
+          + fracHTML(b, N) + ' = ' + pHTML(genau2))
+        : st('Genau 2 rote', 'Ohne Zurücklegen ändert sich der Nenner: ' + fracHTML(binom(r, 2) + '·' + binom(b, 1), binom(N, 3))
+          + ' = ' + pHTML(genau2)),
+      mitZ
+        ? st('Genau 3 rote', fracHTML(r, N) + '<sup>3</sup> = ' + pHTML(genau3))
+        : st('Genau 3 rote', fracHTML(binom(r, 3), binom(N, 3)) + ' = ' + pHTML(genau3)),
+      st('Addieren', pHTML(genau2) + ' + ' + pHTML(genau3) + ' = <b>' + pHTML(res) + '</b>')
+    ]
+  };
+});
+
+/* Umgekehrt fragen: nicht P(defekt), sondern P(Maschine A | defekt).
+   Das ist der Satz von Bayes und braucht erst die totale Wahrscheinlichkeit. */
+harden('wahrsch', 'bedingt', 6, function (d) {
+  const szen = pick([
+    { g1: 'Maschine A', g2: 'Maschine B', merk: 'defekt', mengeW: 'produziert' },
+    { g1: 'Werk 1', g2: 'Werk 2', merk: 'fehlerhaft', mengeW: 'liefert' },
+    { g1: 'Lieferant A', g2: 'Lieferant B', merk: 'unbrauchbar', mengeW: 'liefert' },
+  ]);
+  const a = ri(1, 9);                                       /* Anteil der ersten Gruppe in Zehnteln */
+  const pA = new F(a, 10), pB = new F(10 - a, 10);
+  const d1 = new F(ri(1, 9), 100), d2 = new F(ri(1, 9), 100);
+  if (d1.eq(d2)) return null;
+  const tot = pA.mul(d1).add(pB.mul(d2));
+  if (tot.isZero()) return null;
+  const res = pA.mul(d1).div(tot);
+  if (res.d > 5000) return null;
+  return {
+    promptHTML: '<span class="big">' + szen.g1 + ' ' + szen.mengeW + ' ' + (a * 10) + ' % der Teile, ' + szen.g2 + ' den Rest.<br>'
+      + 'Von ' + szen.g1 + ' sind ' + (d1.n * 100 / d1.d) + ' % ' + szen.merk + ', von ' + szen.g2 + ' ' + (d2.n * 100 / d2.d) + ' %.<br>'
+      + 'Ein zufällig gewähltes Teil ist ' + szen.merk + '. Wie wahrscheinlich stammt es von <b>' + szen.g1 + '</b>?</span>',
+    wordy: true, fields: [Fnum('P =', P_PH)], check: checkNum(res.v), solHTML: 'P = ' + pHTML(res),
+    steps: [
+      st('Was ist gegeben, was gesucht?', 'Gegeben ist P(' + szen.merk + ' | ' + szen.g1 + '), gesucht ist P(' + szen.g1
+        + ' | ' + szen.merk + ') — die <b>umgekehrte</b> Richtung.'),
+      st('Totale Wahrscheinlichkeit', 'P(' + szen.merk + ') = ' + pHTML(pA) + '·' + pHTML(d1) + ' + ' + pHTML(pB) + '·'
+        + pHTML(d2) + ' = ' + pHTML(tot)),
+      st('Satz von Bayes', 'P(' + szen.g1 + ' | ' + szen.merk + ') = '
+        + fracHTML('P(' + szen.g1 + ') · P(' + szen.merk + ' | ' + szen.g1 + ')', 'P(' + szen.merk + ')')),
+      st('Einsetzen', fracHTML(pHTML(pA) + ' · ' + pHTML(d1), pHTML(tot)) + ' = ' + fracHTML(pHTML(pA.mul(d1)), pHTML(tot))),
+      st('Ergebnis', 'P = <b>' + pHTML(res) + '</b>')
+    ]
+  };
+});
+
+/* Nicht mehr „genau k", sondern ein Bereich — und ab Stufe 8 der
+   Erwartungswert samt Varianz der Binomialverteilung. */
+harden('wahrsch', 'bernoulli', 6, function (d) {
+  const p = new F(pick([1, 1, 2, 3, 1]), pick([2, 3, 4, 5, 6]));
+  if (p.n >= p.d) return null;
+  const n = ri(4, d <= 7 ? 6 : 8);
+  if (d >= 9 && coin(0.4)) {
+    /* Erwartungswert und Varianz */
+    const E = p.mul(n), Va = p.mul(new F(1, 1).sub(p)).mul(n);
+    return {
+      promptHTML: '<span class="big">Ein Versuch gelingt mit p = ' + pHTML(p) + '.<br>Er wird ' + n
+        + '-mal unabhängig wiederholt.<br>Bestimme den <b>Erwartungswert</b> und die <b>Varianz</b> der Trefferzahl.</span>',
+      wordy: true, fields: [Fnum('E(X) =', P_PH), Fnum('V(X) =', P_PH)],
+      check: checkMulti([E.v, Va.v]), solHTML: 'E(X) = ' + pHTML(E) + ' &nbsp;·&nbsp; V(X) = ' + pHTML(Va),
+      steps: [
+        st('Verteilung erkennen', 'n unabhängige Versuche mit gleichem p → <b>Binomialverteilung</b>.'),
+        st('Erwartungswert', 'E(X) = n · p = ' + n + ' · ' + pHTML(p) + ' = <b>' + pHTML(E) + '</b>'),
+        st('Varianz', 'V(X) = n · p · (1 − p) = ' + n + ' · ' + pHTML(p) + ' · ' + pHTML(new F(1, 1).sub(p))
+          + ' = <b>' + pHTML(Va) + '</b>')
+      ]
+    };
+  }
+  const k = ri(2, n - 2);
+  if (k < 2) return null;
+  const hoechstens = d >= 8 && coin(0.5);
+  const q = new F(1, 1).sub(p);
+  const teile = [];
+  let sum = new F(0, 1);
+  if (hoechstens) {
+    for (let i = 0; i <= k; i++) { const t = p.pow(i).mul(q.pow(n - i)).mul(binom(n, i)); teile.push({ i: i, f: t }); sum = sum.add(t); }
+  } else {
+    for (let i = 0; i < k; i++) { const t = p.pow(i).mul(q.pow(n - i)).mul(binom(n, i)); teile.push({ i: i, f: t }); sum = sum.add(t); }
+    sum = new F(1, 1).sub(sum);
+  }
+  if (sum.d > 1e7) return null;
+  return {
+    promptHTML: '<span class="big">Ein Versuch gelingt mit p = ' + pHTML(p) + '.<br>Er wird ' + n
+      + '-mal unabhängig wiederholt.<br>Wie wahrscheinlich sind <b>' + (hoechstens ? 'höchstens ' + k : 'mindestens ' + k)
+      + ' Treffer</b>?</span>',
+    wordy: true, fields: [Fnum('P =', P_PH)], check: checkNum(sum.v), solHTML: 'P = ' + pHTML(sum),
+    steps: [
+      st('Kein einzelner Fall', '„' + (hoechstens ? 'Höchstens' : 'Mindestens') + ' ' + k
+        + '" umfasst mehrere Trefferzahlen — die Einzelwahrscheinlichkeiten müssen '
+        + (hoechstens ? 'addiert' : 'über das Gegenereignis zusammengefasst') + ' werden.'),
+      hoechstens
+        ? st('Die Fälle', teile.map(t => 'P(X = ' + t.i + ') = ' + binomHTML(n, t.i) + '·' + pHTML(p) + '<sup>' + t.i
+          + '</sup>·' + pHTML(q) + '<sup>' + (n - t.i) + '</sup> = ' + pHTML(t.f)).join('<br>'))
+        : st('Gegenereignis', 'Höchstens ' + (k - 1) + ' Treffer:<br>' + teile.map(t => 'P(X = ' + t.i + ') = '
+          + binomHTML(n, t.i) + '·' + pHTML(p) + '<sup>' + t.i + '</sup>·' + pHTML(q) + '<sup>' + (n - t.i)
+          + '</sup> = ' + pHTML(t.f)).join('<br>')),
+      st(hoechstens ? 'Addieren' : 'Abziehen', hoechstens
+        ? chainF(teile.map(t => t.f)) + ' = <b>' + pHTML(sum) + '</b>'
+        : '1 − (' + chainF(teile.map(t => t.f)) + ') = <b>' + pHTML(sum) + '</b>')
+    ]
+  };
+});
+
+/* Vom Erwartungswert zum fairen Einsatz — und zur Varianz. */
+harden('wahrsch', 'erwartung', 6, function (d) {
+  const N = pick([6, 8, 10, 12]);
+  const werte = [], zaehler = [];
+  let rest = N, k = ri(3, 4);
+  for (let i = 0; i < k - 1; i++) { const z = ri(1, Math.max(1, rest - (k - 1 - i))); zaehler.push(z); rest -= z; }
+  zaehler.push(rest);
+  if (zaehler.some(z => z <= 0)) return null;
+  for (let i = 0; i < k; i++) werte.push(rnz(-9, 12));
+  const ps = zaehler.map(z => new F(z, N));
+  let E = new F(0, 1);
+  for (let i = 0; i < k; i++) E = E.add(ps[i].mul(werte[i]));
+  const varianz = d >= 8 && coin(0.5);
+  let E2 = new F(0, 1);
+  for (let i = 0; i < k; i++) E2 = E2.add(ps[i].mul(werte[i] * werte[i]));
+  const Va = E2.sub(E.mul(E));
+  const tab = '<table class="vft"><tr><th>x<sub>i</sub></th>' + werte.map(w => '<td>' + num(w) + '</td>').join('')
+    + '</tr><tr><th>P</th>' + ps.map(p => '<td>' + pHTML(p) + '</td>').join('') + '</tr></table>';
+  if (varianz) {
+    return {
+      promptHTML: '<span class="big">' + tab + 'Berechne die <b>Varianz</b> V(X).</span>',
+      wordy: true, fields: [Fnum('V(X) =', P_PH)], check: checkNum(Va.v), solHTML: 'V(X) = ' + pHTML(Va),
+      steps: [
+        st('Erwartungswert zuerst', 'E(X) = ' + chainF(ps.map((p, i) => p.mul(werte[i]))) + ' = ' + pHTML(E)),
+        st('Verschiebungssatz', 'V(X) = E(X²) − (E(X))² — das ist der kürzere Weg.'),
+        st('E(X²)', chainF(ps.map((p, i) => p.mul(werte[i] * werte[i]))) + ' = ' + pHTML(E2)),
+        st('Ergebnis', 'V(X) = ' + pHTML(E2) + ' − ' + parenH(pHTML(E)) + '² = <b>' + pHTML(Va) + '</b>')
+      ]
+    };
+  }
+  /* fairer Einsatz: Auszahlung minus Einsatz soll 0 sein */
+  return {
+    promptHTML: '<span class="big">' + tab + 'X ist die <b>Auszahlung</b> eines Spiels in Euro.<br>'
+      + 'Welchen <b>Einsatz</b> muss man verlangen, damit das Spiel fair ist?</span>',
+    wordy: true, fields: [Fnum('Einsatz =', P_PH)], check: checkNum(E.v), solHTML: 'Einsatz = ' + pHTML(E),
+    steps: [
+      st('Was heißt fair?', 'Fair bedeutet: Auszahlung minus Einsatz hat den Erwartungswert <b>0</b>.'),
+      st('Erwartete Auszahlung', 'E(X) = ' + chainF(ps.map((p, i) => p.mul(werte[i]))) + ' = ' + pHTML(E)),
+      st('Gleichung', 'E(X) − Einsatz = 0 → Einsatz = E(X)'),
+      st('Ergebnis', 'Einsatz = <b>' + pHTML(E) + '</b>')
+    ]
+  };
+});
+
+/* ============================================================
+   STOCHASTIK · KOMBINATORIK
+   ============================================================ */
+
+/* Zaehlen mit Einschraenkung: die erste Stelle darf keine Null sein,
+   ein Platz ist vergeben, ein Buchstabe muss stehen bleiben. */
+harden('kombinatorik', 'produkt', 5, function (d) {
+  const art = pick(d >= 8 ? ['zahl', 'zahlOhne', 'sitz', 'code', 'flagge', 'nebeneinander']
+    : ['zahl', 'sitz', 'code', 'flagge']);
+  if (art === 'flagge') {
+    /* benachbarte Streifen muessen verschieden sein */
+    const f = ri(4, 9), sN = ri(3, 4);
+    const res = f * Math.pow(f - 1, sN - 1);
+    return {
+      promptHTML: '<span class="big">Eine Fahne besteht aus ' + sN + ' waagerechten Streifen.<br>Es stehen ' + f
+        + ' Farben zur Verfügung, aber <b>benachbarte Streifen dürfen nicht dieselbe Farbe</b> haben.<br>'
+        + 'Wie viele Fahnen gibt es?</span>',
+      wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+      steps: [
+        st('Oberster Streifen', 'Noch keine Einschränkung → <b>' + f + '</b> Farben.'),
+        st('Jeder weitere Streifen', 'Nur die Farbe des Streifens direkt darüber ist verboten → je <b>' + (f - 1) + '</b> Farben.'),
+        st('Produktregel', f + ' · ' + (f - 1) + '<sup>' + (sN - 1) + '</sup> = <b>' + res + '</b>'),
+        st('Warum nicht ' + f + '<sup>' + sN + '</sup>?', 'Weil die Wahl jedes Streifens von der vorherigen abhängt — '
+          + 'die Anzahl der Möglichkeiten ist ab dem zweiten Streifen kleiner.')
+      ]
+    };
+  }
+  if (art === 'nebeneinander') {
+    const n = ri(4, 8);
+    const res = 2 * fakt(n - 1);
+    return {
+      promptHTML: '<span class="big">' + n + ' Personen stellen sich in eine Reihe.<br>Zwei bestimmte Personen wollen '
+        + '<b>nebeneinander</b> stehen.<br>Wie viele Reihenfolgen gibt es?</span>',
+      wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+      steps: [
+        st('Die zwei zusammenkleben', 'Man behandelt das Paar als <b>einen</b> Block — dann sind es nur noch '
+          + (n - 1) + ' Objekte.'),
+        st('Blöcke anordnen', (n - 1) + '! = ' + fakt(n - 1)),
+        st('Innerhalb des Blocks', 'Die beiden können noch untereinander tauschen → Faktor <b>2</b>.'),
+        st('Ergebnis', '2 · ' + fakt(n - 1) + ' = <b>' + res + '</b>')
+      ]
+    };
+  }
+  if (art === 'zahl') {
+    /* n-stellige Zahlen, Ziffern duerfen sich wiederholen, keine fuehrende Null */
+    const n = ri(3, d <= 7 ? 5 : 7);
+    const res = 9 * Math.pow(10, n - 1);
+    return {
+      promptHTML: '<span class="big">Wie viele <b>' + n + '-stellige</b> Zahlen gibt es?<br>'
+        + '<span class="muted">Ziffern dürfen sich wiederholen, führende Nullen zählen nicht.</span></span>',
+      wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+      steps: [
+        st('Die Stellen einzeln betrachten', 'Für jede Stelle wird gezählt, wie viele Ziffern dort stehen dürfen.'),
+        st('Die erste Stelle ist besonders', 'Dort ist die 0 verboten → nur <b>9</b> Möglichkeiten.'),
+        st('Alle weiteren Stellen', 'Je <b>10</b> Möglichkeiten, das sind ' + (n - 1) + ' Stellen.'),
+        st('Produktregel', '9 · 10<sup>' + (n - 1) + '</sup> = <b>' + res + '</b>')
+      ]
+    };
+  }
+  if (art === 'zahlOhne') {
+    /* n-stellige Zahlen mit lauter verschiedenen Ziffern */
+    const n = ri(3, 6);
+    let rest = 9;
+    for (let i = 1; i < n; i++) rest *= (10 - i);
+    const res = 9 * (function () { let p = 1; for (let i = 1; i < n; i++) p *= (10 - i); return p; })();
+    const fakt2 = [];
+    for (let i = 1; i < n; i++) fakt2.push(10 - i);
+    return {
+      promptHTML: '<span class="big">Wie viele <b>' + n + '-stellige</b> Zahlen mit lauter <b>verschiedenen</b> Ziffern gibt es?</span>',
+      wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+      steps: [
+        st('Erste Stelle', 'Keine 0 → <b>9</b> Ziffern.'),
+        st('Zweite Stelle', 'Die 0 ist jetzt wieder erlaubt, aber die erste Ziffer ist verbraucht → <b>9</b> Ziffern.'),
+        st('Weiter nach innen', 'Mit jeder Stelle fällt eine Ziffer weg: ' + fakt2.join(' · ')),
+        st('Produktregel', '9 · ' + fakt2.join(' · ') + ' = <b>' + res + '</b>')
+      ]
+    };
+  }
+  if (art === 'sitz') {
+    const n = ri(5, 10), fest = ri(1, 2);
+    const res = fakt(n - fest) * (fest === 1 ? 1 : 1);
+    return {
+      promptHTML: '<span class="big">' + n + ' Personen setzen sich in eine Reihe.<br>'
+        + (fest === 1 ? 'Eine bestimmte Person muss <b>ganz außen links</b> sitzen.'
+          : 'Zwei bestimmte Personen sitzen <b>fest</b> auf den beiden äußeren Plätzen (links und rechts sind vergeben).')
+        + '<br>Wie viele Sitzordnungen gibt es?</span>',
+      wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+      steps: [
+        st('Die festen Plätze abziehen', fest + ' Platz' + (fest > 1 ? 'e sind' : ' ist') + ' vergeben, es bleiben <b>'
+          + (n - fest) + '</b> freie Plätze und ebenso viele Personen.'),
+        st('Der Rest ist eine Permutation', (n - fest) + '! = ' + faktHTML(n - fest)),
+        st('Ergebnis', '<b>' + res + '</b>')
+      ]
+    };
+  }
+  /* Code mit gemischten Stellen */
+  const buch = ri(1, 4), ziff = ri(1, 4);
+  const res = Math.pow(26, buch) * Math.pow(10, ziff);
+  return {
+    promptHTML: '<span class="big">Ein Kennwort besteht aus ' + buch + ' Großbuchstaben (A–Z) gefolgt von '
+      + ziff + ' Ziffern (0–9).<br>Wiederholungen sind erlaubt.<br>Wie viele Kennwörter gibt es?</span>',
+    wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+    steps: [
+      st('Buchstabenteil', '26 Möglichkeiten je Stelle, ' + buch + ' Stellen → 26<sup>' + buch + '</sup> = ' + Math.pow(26, buch)),
+      st('Zifferteil', '10<sup>' + ziff + '</sup> = ' + Math.pow(10, ziff)),
+      st('Produktregel', Math.pow(26, buch) + ' · ' + Math.pow(10, ziff) + ' = <b>' + res + '</b>')
+    ]
+  };
+});
+
+/* Permutation mit Wiederholung — gleiche Objekte duerfen nicht mehrfach
+   gezaehlt werden, also durch die Fakultaeten der Gruppen teilen. */
+const WORTE = [
+  { w: 'BANANE', g: { B: 1, A: 3, N: 2, E: 1 } },
+  { w: 'MISSISSIPPI', g: { M: 1, I: 4, S: 4, P: 2 } },
+  { w: 'STATISTIK', g: { S: 2, T: 3, A: 1, I: 2, K: 1 } },
+  { w: 'ANANAS', g: { A: 3, N: 2, S: 1 } },
+  { w: 'ERBSE', g: { E: 2, R: 1, B: 1, S: 1 } },
+  { w: 'KAFFEE', g: { K: 1, A: 1, F: 2, E: 2 } },
+  { w: 'TOMATE', g: { T: 2, O: 1, M: 1, A: 1, E: 1 } },
+  { w: 'BROMBEERE', g: { B: 2, R: 2, O: 1, M: 1, E: 3 } },
+  { w: 'ABRAKADABRA', g: { A: 5, B: 2, R: 2, K: 1, D: 1 } },
+];
+harden('kombinatorik', 'permutation', 5, function (d) {
+  if (d >= 8 && coin(0.35)) {
+    /* Kugeln in Gruppen gleicher Farbe */
+    const a = ri(2, 4), b = ri(2, 4), c = ri(1, 3);
+    const n = a + b + c;
+    if (n > 10) return null;
+    const res = fakt(n) / (fakt(a) * fakt(b) * fakt(c));
+    return {
+      promptHTML: '<span class="big">' + a + ' rote, ' + b + ' blaue und ' + c + ' grüne Kugeln werden in eine Reihe gelegt.<br>'
+        + 'Kugeln gleicher Farbe sind <b>nicht</b> unterscheidbar.<br>Wie viele verschiedene Reihen gibt es?</span>',
+      wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+      steps: [
+        st('Erst so tun, als wären alle verschieden', n + '! = ' + fakt(n) + ' Anordnungen.'),
+        st('Zu viel gezählt', 'Die ' + a + ' roten kann man untereinander auf ' + a + '! Arten vertauschen, ohne dass sich '
+          + 'die Reihe ändert — dasselbe gilt für die anderen Farben.'),
+        st('Formel', fracHTML(n + '!', a + '! · ' + b + '! · ' + c + '!') + ' = '
+          + fracHTML(fakt(n), fakt(a) + ' · ' + fakt(b) + ' · ' + fakt(c))),
+        st('Ergebnis', '<b>' + res + '</b>')
+      ]
+    };
+  }
+  const W = pick(d <= 6 ? WORTE.slice(0, 6) : WORTE);
+  const n = W.w.length;
+  const buchst = Object.keys(W.g);
+  let nenner = 1;
+  buchst.forEach(b => { nenner *= fakt(W.g[b]); });
+  const res = fakt(n) / nenner;
+  const mehrfach = buchst.filter(b => W.g[b] > 1);
+  if (!mehrfach.length) return null;
+  return {
+    promptHTML: '<span class="big">Wie viele verschiedene „Wörter" lassen sich aus allen Buchstaben von<br>'
+      + '<b>' + W.w + '</b><br>bilden?</span>',
+    wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+    steps: [
+      st('Buchstaben zählen', 'Das Wort hat <b>' + n + '</b> Buchstaben, davon kommen mehrfach vor: '
+        + mehrfach.map(b => b + ' (' + W.g[b] + '×)').join(', ') + '.'),
+      st('Wären alle verschieden', n + '! = ' + fakt(n)),
+      st('Doppelt gezähltes herausteilen', 'Die gleichen Buchstaben untereinander zu vertauschen ändert nichts — '
+        + 'deshalb durch ' + mehrfach.map(b => W.g[b] + '!').join(' · ') + ' teilen.'),
+      st('Formel', fracHTML(n + '!', buchst.map(b => W.g[b] + '!').join(' · ')) + ' = '
+        + fracHTML(fakt(n), nenner) + ' = <b>' + res + '</b>')
+    ]
+  };
+});
+
+/* Nicht mehr ein Binomialkoeffizient, sondern zwei Gruppen gleichzeitig —
+   und ab Stufe 8 das Gegenereignis. */
+harden('kombinatorik', 'binom', 5, function (d) {
+  const szen = pick([
+    { A: 'Frauen', B: 'Männer', obj: 'Ausschuss' },
+    { A: 'Mathematikaufgaben', B: 'Physikaufgaben', obj: 'Klausur' },
+    { A: 'roten Kugeln', B: 'blauen Kugeln', obj: 'Griff' },
+  ]);
+  const nA = ri(4, 9), nB = ri(4, 9);
+  const kA = ri(2, Math.min(3, nA - 1)), kB = ri(1, Math.min(3, nB - 1));
+  if (d >= 8 && coin(0.5)) {
+    /* mindestens eine aus Gruppe A — ueber das Gegenereignis */
+    const k = kA + kB;
+    if (k > nB) return null;
+    const gesamt = binom(nA + nB, k), ohne = binom(nB, k);
+    const res = gesamt - ohne;
+    if (res <= 0) return null;
+    return {
+      promptHTML: '<span class="big">Aus ' + nA + ' ' + szen.A + ' und ' + nB + ' ' + szen.B + ' werden <b>' + k
+        + '</b> ausgewählt (Reihenfolge egal).<br>Wie viele Auswahlen enthalten <b>mindestens eine' + (szen.A === 'Frauen' ? '' : '')
+        + '</b> aus der Gruppe der ' + szen.A + '?</span>',
+      wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+      steps: [
+        st('Gegenereignis', '„Mindestens eine" ist das Gegenteil von „<b>keine einzige</b>" — das ist viel kürzer, '
+          + 'als alle Fälle 1, 2, 3 … einzeln zu addieren.'),
+        st('Alle Auswahlen', binomHTML(nA + nB, k) + ' = ' + gesamt),
+        st('Auswahlen ganz ohne ' + szen.A, binomHTML(nB, k) + ' = ' + ohne),
+        st('Ergebnis', gesamt + ' − ' + ohne + ' = <b>' + res + '</b>')
+      ]
+    };
+  }
+  const res = binom(nA, kA) * binom(nB, kB);
+  return {
+    promptHTML: '<span class="big">Aus ' + nA + ' ' + szen.A + ' und ' + nB + ' ' + szen.B + ' soll ein ' + szen.obj
+      + ' gebildet werden:<br><b>' + kA + '</b> aus der ersten und <b>' + kB + '</b> aus der zweiten Gruppe.<br>'
+      + 'Wie viele Möglichkeiten gibt es?</span>',
+    wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+    steps: [
+      st('Zwei getrennte Auswahlen', 'Die beiden Gruppen werden <b>unabhängig</b> voneinander ausgewählt.'),
+      st('Erste Gruppe', binomHTML(nA, kA) + ' = ' + binom(nA, kA)),
+      st('Zweite Gruppe', binomHTML(nB, kB) + ' = ' + binom(nB, kB)),
+      st('Produktregel', 'Jede Auswahl der einen lässt sich mit jeder der anderen kombinieren: '
+        + binom(nA, kA) + ' · ' + binom(nB, kB) + ' = <b>' + res + '</b>')
+    ]
+  };
+});
+
+/* Der vierte Fall des Urnenmodells: mit Zuruecklegen und ohne Reihenfolge. */
+const ZIEH_SZEN = [
+  { o: 'Sorten Brötchen', t: 'Brötchen', w: 'Tüten', ort: 'In einer Bäckerei gibt es' },
+  { o: 'Eissorten', t: 'Kugeln', w: 'Becher', ort: 'Eine Eisdiele führt' },
+  { o: 'Sorten Schrauben', t: 'Schrauben', w: 'Packungen', ort: 'Ein Baumarkt führt' },
+  { o: 'Blumenarten', t: 'Blumen', w: 'Sträuße', ort: 'Ein Blumenladen führt' },
+];
+harden('kombinatorik', 'ziehen', 6, function (d) {
+  const n = ri(4, d <= 7 ? 8 : 12), k = ri(2, d <= 7 ? 3 : 5);
+  const S = pick(ZIEH_SZEN);
+  const res = binom(n + k - 1, k);
+  return {
+    promptHTML: '<span class="big">' + S.ort + ' ' + n + ' ' + S.o + '.<br>Jemand kauft <b>' + k
+      + '</b> ' + S.t + ' und darf dieselbe Sorte mehrfach nehmen.<br>Wie viele verschiedene ' + S.w + ' sind möglich?</span>',
+    wordy: true, fields: [Fnum('Anzahl =')], check: checkNum(res), solHTML: 'Anzahl = ' + res,
+    steps: [
+      st('Welches Urnenmodell?', '<b>Mit</b> Wiederholung und <b>ohne</b> Reihenfolge — der vierte und ungewohnteste Fall.'),
+      st('Der Trick', 'Man notiert nur, wie viele je Sorte genommen werden. Das sind ' + k + ' Kreuze, die auf '
+        + n + ' Fächer verteilt werden — dafür braucht man ' + (n - 1) + ' Trennstriche.'),
+      st('Umgeformt', 'Aus ' + (k + n - 1) + ' Positionen werden die ' + k + ' Kreuze ausgewählt: ' + binomHTML(n + k - 1, k)),
+      st('Ergebnis', binomHTML(n + k - 1, k) + ' = <b>' + res + '</b>')
+    ]
+  };
+});
+
+/* ============================================================
+   LINEARE ALGEBRA
+   ============================================================ */
+
+function det4(M) {                                   /* Laplace nach der ersten Zeile */
+  let s = 0;
+  for (let j = 0; j < 4; j++) {
+    if (M[0][j] === 0) continue;
+    const sub = [];
+    for (let i = 1; i < 4; i++) sub.push(M[i].filter((_, k) => k !== j));
+    s += (j % 2 ? -1 : 1) * M[0][j] * det3(sub);
+  }
+  return s;
+}
+/* Ganzzahlige Matrix mit Determinante 1 — dann ist auch die Inverse ganzzahlig. */
+function unimodular(n, schritte) {
+  const A = [];
+  for (let i = 0; i < n; i++) { A.push([]); for (let j = 0; j < n; j++) A[i].push(i === j ? 1 : 0); }
+  for (let s = 0; s < schritte; s++) {
+    let i = ri(0, n - 1), j = ri(0, n - 1);
+    if (i === j) { j = (j + 1) % n; }
+    const k = rnz(-2, 2);
+    for (let c = 0; c < n; c++) A[i][c] += k * A[j][c];
+  }
+  return A;
+}
+function matInv3(A) {                                /* nur fuer det = ±1 gedacht */
+  const D = det3(A);
+  const co = [];
+  for (let i = 0; i < 3; i++) {
+    co.push([]);
+    for (let j = 0; j < 3; j++) {
+      const sub = [];
+      for (let r = 0; r < 3; r++) { if (r === i) continue; sub.push(A[r].filter((_, c) => c !== j)); }
+      co[i].push(((i + j) % 2 ? -1 : 1) * det2(sub));
+    }
+  }
+  const inv = [];
+  for (let i = 0; i < 3; i++) { inv.push([]); for (let j = 0; j < 3; j++) inv[i].push(co[j][i] / D); }
+  return inv;
+}
+function maxAbsMat(A) { let m = 0; A.forEach(r => r.forEach(v => { m = Math.max(m, Math.abs(v)); })); return m; }
+function transp(A) { return A[0].map((_, j) => A.map(r => r[j])); }
+
+/* Erst transponieren, dann skalieren, dann addieren — ein Ausdruck statt
+   einer einzelnen Rechenart. */
+harden('matrix', 'add', 5, function (d) {
+  const r = ri(2, 3), c = d >= 8 ? ri(2, 3) : 2;
+  if (r === c && coin(0.5)) { /* quadratisch erlaubt A + Bᵀ */ }
+  const A = randMat(r, c, -6, 6), B = randMat(c, r, -6, 6);
+  const s1 = rnz(-4, 4), s2 = rnz(-4, 4);
+  const BT = transp(B);
+  const S = A.map((row, i) => row.map((v, j) => s1 * v + s2 * BT[i][j]));
+  if (maxAbsMat(S) > 90) return null;
+  return {
+    promptHTML: '<span class="big">A = ' + matHTML(numMat(A)) + ' &nbsp; B = ' + matHTML(numMat(B)) + '</span>',
+    qtext: 'Berechne ' + coefHTML(s1, 'A', true) + coefHTML(s2, 'B<sup>T</sup>', false) + '.',
+    fields: [Fmat(r, c, coefHTML(s1, 'A', true) + coefHTML(s2, 'B<sup>T</sup>', false))],
+    check: checkMat(S), solHTML: matHTML(numMat(S)),
+    steps: [
+      st('Format prüfen', 'B ist eine ' + c + '×' + r + '-Matrix. Addieren darf man nur gleiche Formate — '
+        + 'deshalb steht dort B<sup>T</sup>, und die ist ' + r + '×' + c + '.'),
+      st('Transponieren', 'B<sup>T</sup> entsteht durch Spiegeln an der Hauptdiagonale: ' + matHTML(numMat(BT))),
+      st('Skalieren', coefHTML(s1, 'A', true) + ' = ' + matHTML(numMat(A.map(row => row.map(v => s1 * v)))) + '<br>'
+        + coefHTML(s2, 'B<sup>T</sup>', true) + ' = ' + matHTML(numMat(BT.map(row => row.map(v => s2 * v))))),
+      st('Eintragsweise addieren', '<b>' + matHTML(numMat(S)) + '</b>')
+    ]
+  };
+});
+
+/* Nicht mehr quadratisch: erst muss man pruefen, ob das Produkt ueberhaupt
+   definiert ist, und welches Format herauskommt. */
+harden('matrix', 'mult', 5, function (d) {
+  const m = ri(2, 3), k = ri(2, d <= 7 ? 3 : 4), n = ri(2, 3);
+  if (m === k && k === n) return null;                /* quadratisch gibt es schon */
+  const A = randMat(m, k, -5, 5), B = randMat(k, n, -5, 5);
+  const C = matMul(A, B);
+  if (maxAbsMat(C) > 200) return null;
+  return {
+    promptHTML: '<span class="big">A = ' + matHTML(numMat(A)) + ' &nbsp; B = ' + matHTML(numMat(B)) + '</span>',
+    qtext: 'Berechne A · B.',
+    fields: [Fmat(m, n, 'A · B')], check: checkMat(C), solHTML: matHTML(numMat(C)),
+    steps: [
+      st('Formate prüfen', 'A ist ' + m + '×' + k + ', B ist ' + k + '×' + n + '. Die inneren Zahlen stimmen überein ('
+        + k + ' = ' + k + '), also ist das Produkt definiert — und ' + m + '×' + n + ' groß.'),
+      st('Regel', 'Der Eintrag in Zeile i, Spalte j ist das Skalarprodukt aus <b>Zeile i von A</b> und <b>Spalte j von B</b>.'),
+      st('Erster Eintrag', A[0].map((v, t) => paren(v) + '·' + paren(B[t][0])).join(' + ') + ' = ' + num(C[0][0])),
+      st('Ergebnis', '<b>' + matHTML(numMat(C)) + '</b>'),
+      st('Zur Warnung', 'B · A hätte hier ' + (n === m ? 'ein anderes Format' : 'gar keinen Sinn') + ' — '
+        + 'die Matrizenmultiplikation ist nicht vertauschbar.')
+    ]
+  };
+});
+
+/* Aus A² wird ein Matrixpolynom: A² − k·A + m·E. Das E darf man nicht
+   vergessen — eine Zahl allein laesst sich nicht addieren. */
+harden('matrix', 'quadrat', 5, function (d) {
+  const A = randMat(2, 2, -5, 5);
+  const k = rnz(-4, 4), m = rnz(-6, 6);
+  const A2 = matMul(A, A);
+  const E = [[1, 0], [0, 1]];
+  const S = A2.map((row, i) => row.map((v, j) => v - k * A[i][j] + m * E[i][j]));
+  if (maxAbsMat(S) > 150) return null;
+  if (d >= 8 && coin(0.4)) {
+    const A3 = matMul(A2, A);
+    if (maxAbsMat(A3) > 400) return null;
+    return {
+      promptHTML: '<span class="big">A = ' + matHTML(numMat(A)) + '</span>',
+      qtext: 'Berechne A³.',
+      fields: [Fmat(2, 2, 'A³')], check: checkMat(A3), solHTML: matHTML(numMat(A3)),
+      steps: [
+        st('Nicht eintragsweise potenzieren', 'A³ heißt A·A·A — die Einträge einzeln hoch drei zu nehmen wäre falsch.'),
+        st('Erst A²', matHTML(numMat(A2))),
+        st('Dann mal A', matHTML(numMat(A2)) + ' · ' + matHTML(numMat(A)) + ' = <b>' + matHTML(numMat(A3)) + '</b>')
+      ]
+    };
+  }
+  return {
+    promptHTML: '<span class="big">A = ' + matHTML(numMat(A)) + '</span>',
+    qtext: 'Berechne A² ' + (k > 0 ? '−' : '+') + ' ' + Math.abs(k) + '·A ' + (m > 0 ? '+' : '−') + ' ' + Math.abs(m) + '·E.',
+    fields: [Fmat(2, 2, 'Ergebnis')], check: checkMat(S), solHTML: matHTML(numMat(S)),
+    steps: [
+      st('Was ist E?', 'E ist die Einheitsmatrix ' + matHTML([['1', '0'], ['0', '1']])
+        + ' — nur so lässt sich eine Zahl zu einer Matrix addieren.'),
+      st('A²', matHTML(numMat(A)) + ' · ' + matHTML(numMat(A)) + ' = ' + matHTML(numMat(A2))),
+      st(coefHTML(-k, 'A', true), matHTML(numMat(A.map(row => row.map(v => -k * v))))),
+      st(coefHTML(m, 'E', true), matHTML(numMat([[m, 0], [0, m]]))),
+      st('Alles addieren', '<b>' + matHTML(numMat(S)) + '</b>')
+    ]
+  };
+});
+
+/* Determinante: ab Stufe 5 lohnt die Entwicklung nach der Zeile mit den
+   meisten Nullen, ab Stufe 8 steht eine 4×4 da, die Sarrus nicht mehr kann. */
+harden('determinante', 'det3', 5, function (d) {
+  if (d >= 8) {
+    const M = randMat(4, 4, -4, 4);
+    /* eine Zeile mit drei Nullen — sonst wird die Rechnung unzumutbar */
+    const z = ri(0, 3), sp = ri(0, 3);
+    for (let j = 0; j < 4; j++) if (j !== sp) M[z][j] = 0;
+    if (M[z][sp] === 0) M[z][sp] = rnz(-4, 4);
+    const D = det4(M);
+    if (Math.abs(D) > 4000) return null;
+    const sub = [];
+    for (let i = 0; i < 4; i++) { if (i === z) continue; sub.push(M[i].filter((_, c) => c !== sp)); }
+    const vz = ((z + sp) % 2) ? -1 : 1;
+    return {
+      promptHTML: '<span class="big">det ' + matHTML(numMat(M)) + '</span>',
+      fields: [Fnum('det A =', 'Zahl')], check: checkNum(D), solHTML: 'det A = ' + num(D),
+      steps: [
+        st('Sarrus hilft hier nicht', 'Die Regel von Sarrus gilt <b>nur</b> für 3×3. Bei 4×4 wird nach einer Zeile oder '
+          + 'Spalte entwickelt (Laplace).'),
+        st('Die günstigste Zeile suchen', 'Zeile ' + (z + 1) + ' enthält drei Nullen — dort bleibt nur <b>ein</b> Summand übrig.'),
+        st('Vorzeichen', '(−1)<sup>' + (z + 1) + '+' + (sp + 1) + '</sup> = ' + num(vz)),
+        st('Entwickeln', num(vz) + ' · ' + paren(M[z][sp]) + ' · det' + matHTML(numMat(sub))
+          + ' = ' + num(vz) + ' · ' + paren(M[z][sp]) + ' · ' + paren(det3(sub))),
+        st('Ergebnis', 'det A = <b>' + num(D) + '</b>')
+      ]
+    };
+  }
+  const A = randMat(3, 3, -6, 6);
+  const z = ri(0, 2);
+  const behalten = ri(0, 2);
+  for (let j = 0; j < 3; j++) if (j !== behalten) A[z][j] = 0;
+  if (A[z][behalten] === 0) A[z][behalten] = rnz(-6, 6);
+  const D = det3(A);
+  const sub = [];
+  for (let i = 0; i < 3; i++) { if (i === z) continue; sub.push(A[i].filter((_, c) => c !== behalten)); }
+  const vz = ((z + behalten) % 2) ? -1 : 1;
+  return {
+    promptHTML: '<span class="big">det ' + matHTML(numMat(A)) + '</span>',
+    fields: [Fnum('det A =', 'Zahl')], check: checkNum(D), solHTML: 'det A = ' + num(D),
+    steps: [
+      st('Nicht blind rechnen', 'Zeile ' + (z + 1) + ' besteht fast nur aus Nullen. Entwickelt man nach dieser Zeile, '
+        + 'bleibt statt sechs Produkten nur <b>eines</b> übrig.'),
+      st('Vorzeichen', '(−1)<sup>' + (z + 1) + '+' + (behalten + 1) + '</sup> = ' + num(vz)),
+      st('Streichen', 'Zeile ' + (z + 1) + ' und Spalte ' + (behalten + 1) + ' wegstreichen: det' + matHTML(numMat(sub))
+        + ' = ' + num(det2(sub))),
+      st('Ergebnis', num(vz) + ' · ' + paren(A[z][behalten]) + ' · ' + paren(det2(sub)) + ' = <b>' + num(D) + '</b>')
+    ]
+  };
+});
+
+/* Nicht „ist sie invertierbar", sondern „fuer welches t ist sie es nicht" —
+   damit wird aus dem Kriterium eine Gleichung. */
+harden('determinante', 'regulaer', 5, function (d) {
+  if (d >= 8) {
+    /* 3×3 mit t in einem Eintrag → lineare Gleichung in t */
+    const A = randMat(3, 3, -4, 4);
+    const i = ri(0, 2), j = ri(0, 2);
+    /* det ist linear in A[i][j]: det = det(A mit 0) + A[i][j]·Kofaktor */
+    const sub = [];
+    for (let r = 0; r < 3; r++) { if (r === i) continue; sub.push(A[r].filter((_, c) => c !== j)); }
+    const kof = (((i + j) % 2) ? -1 : 1) * det2(sub);
+    if (kof === 0) return null;
+    const A0 = A.map(r => r.slice()); A0[i][j] = 0;
+    const rest = det3(A0);
+    const t0 = new F(-rest, kof);
+    if (t0.d > 6 || Math.abs(t0.v) > 30) return null;
+    const zeig = A.map((r, ri2) => r.map((v, ci) => (ri2 === i && ci === j) ? '<i>t</i>' : num(v)));
+    return {
+      promptHTML: '<span class="big">A = ' + matHTML(zeig) + '</span>',
+      qtext: 'Für welches <i>t</i> ist A <b>nicht</b> invertierbar?',
+      fields: [Fnum('<i>t</i> =')], check: checkNum(t0.v), solHTML: '<i>t</i> = ' + t0.html(),
+      steps: [
+        st('Kriterium', 'Nicht invertierbar heißt det A = 0 — daraus wird eine <b>Gleichung</b> für t.'),
+        st('Nach Zeile ' + (i + 1) + ' entwickeln', 'Nur ein Summand enthält t: (−1)<sup>' + (i + 1) + '+' + (j + 1)
+          + '</sup>·t·det' + matHTML(numMat(sub)) + ' = ' + num(kof) + '·t'),
+        st('Der Rest der Entwicklung', 'ergibt ' + num(rest) + ', also det A = ' + num(kof) + '<i>t</i> ' + (rest < 0 ? '− ' + (-rest) : '+ ' + rest)),
+        st('Gleichung lösen', num(kof) + '<i>t</i> = ' + num(-rest) + ' → <i>t</i> = <b>' + t0.html() + '</b>')
+      ]
+    };
+  }
+  const a = rnz(-8, 8), b = rnz(-8, 8), c = rnz(-8, 8);
+  /* det [[a, b], [c, t]] = a·t − b·c = 0 */
+  const t0 = new F(b * c, a);
+  if (t0.d > 6 || Math.abs(t0.v) > 40) return null;
+  return {
+    promptHTML: '<span class="big">A = ' + matHTML([[num(a), num(b)], [num(c), '<i>t</i>']]) + '</span>',
+    qtext: 'Für welches <i>t</i> ist A <b>nicht</b> invertierbar?',
+    fields: [Fnum('<i>t</i> =')], check: checkNum(t0.v), solHTML: '<i>t</i> = ' + t0.html(),
+    steps: [
+      st('Kriterium', 'A ist genau dann nicht invertierbar, wenn det A = 0 ist.'),
+      st('Determinante mit t', 'det A = ' + paren(a) + '·<i>t</i> − ' + paren(b) + '·' + paren(c) + ' = '
+        + num(a) + '<i>t</i> ' + (b * c < 0 ? '+ ' + (-b * c) : '− ' + b * c)),
+      st('Null setzen', num(a) + '<i>t</i> = ' + num(b * c)),
+      st('Ergebnis', '<i>t</i> = ' + fracHTML(num(b * c), num(a)) + ' = <b>' + t0.html() + '</b>')
+    ]
+  };
+});
+
+/* Die Inverse einer 3×3 — mit Determinante 1 gebaut, damit sie ganzzahlig bleibt. */
+harden('determinante', 'inv', 6, function (d) {
+  const A = unimodular(3, d <= 7 ? 3 : 4);
+  if (maxAbsMat(A) > (d <= 7 ? 9 : 20) || maxAbsMat(A) < 2) return null;
+  const I = matInv3(A);
+  if (maxAbsMat(I) > 40) return null;
+  for (const r of I) for (const v of r) if (Math.abs(v - Math.round(v)) > 1e-9) return null;
+  return {
+    promptHTML: '<span class="big">A = ' + matHTML(numMat(A)) + '</span>',
+    qtext: 'Gesucht: A<sup>−1</sup>',
+    fields: [Fmat(3, 3, 'A<sup>−1</sup>')], check: checkMat(I),
+    solHTML: 'A<sup>−1</sup> = ' + matHTML(numMat(I)),
+    steps: [
+      st('Die 2×2-Formel gilt hier nicht', 'Bei 3×3 gibt es kein „tauschen und Vorzeichen wechseln". '
+        + 'Man rechnet mit der Adjunkten oder formt (A | E) mit dem Gauß-Verfahren zu (E | A<sup>−1</sup>) um.'),
+      st('Determinante zuerst', 'det A = <b>' + num(det3(A)) + '</b> ≠ 0 — A ist also invertierbar.'),
+      st('Gauß-Weg', 'Links und rechts dieselben Zeilenumformungen anwenden:<br>'
+        + matHTML(numMat(A)) + ' | ' + matHTML([['1', '0', '0'], ['0', '1', '0'], ['0', '0', '1']])
+        + ' &nbsp;→&nbsp; ' + matHTML([['1', '0', '0'], ['0', '1', '0'], ['0', '0', '1']]) + ' | ' + matHTML(numMat(I))),
+      st('Probe', 'A · A<sup>−1</sup> muss die Einheitsmatrix ergeben.'),
+      st('Ergebnis', '<b>' + matHTML(numMat(I)) + '</b>')
+    ]
+  };
+});
+
+/* Lösbarkeit mit Parameter: nicht mehr ablesen, sondern ausrechnen. */
+harden('gauss', 'art', 5, function (d) {
+  const a = rnz(-4, 4), b = rnz(-4, 4), c = rnz(-4, 4);
+  /* [[a, b], [c, t]] — unendlich viele bzw. keine Loesung bei a·t − b·c = 0 */
+  const t0 = new F(b * c, a);
+  if (t0.d > 4 || Math.abs(t0.v) > 20) return null;
+  const r1 = rnz(-9, 9);
+  const faktor = new F(c, a);
+  if (faktor.d > 4) return null;
+  const r2unend = faktor.mul(r1);
+  if (!r2unend.isInt()) return null;
+  const unendlich = coin(0.5);
+  const r2 = unendlich ? r2unend.v : r2unend.v + rnz(1, 5);
+  const opts = ['unendlich viele Lösungen', 'keine Lösung', 'genau eine Lösung'];
+  return {
+    promptHTML: '<span class="big">' + coefHTML(a, V(), true) + coefHTML(b, Y(), false) + ' = ' + num(r1) + '<br>'
+      + coefHTML(c, V(), true) + ' + <i>t</i>·' + Y() + ' = ' + num(r2) + '</span>', mid: true,
+    qtext: 'Für <i>t</i> = ' + t0.html() + ' — wie viele Lösungen hat das System dann?',
+    fields: [Fmc(opts, 'Antwort wählen')], check: checkMC(unendlich ? 0 : 1),
+    solHTML: opts[unendlich ? 0 : 1],
+    steps: [
+      st('Einsetzen', 'Mit <i>t</i> = ' + t0.html() + ' lautet die zweite Zeile: ' + coefHTML(c, V(), true)
+        + '<span class="op">' + (t0.v < 0 ? MINUS : '+') + '</span>' + t0.abs().html() + '·' + Y() + ' = ' + num(r2)),
+      st('Die Zeilen vergleichen', 'Links ist Zeile 2 genau das ' + faktor.html() + '-fache von Zeile 1.'),
+      st('Und rechts?', parenH(faktor.html()) + ' · ' + paren(r1) + ' = ' + num(r2unend.v) + (unendlich
+        ? ' — das passt. Beide Gleichungen sagen dasselbe.'
+        : ', aber dort steht ' + num(r2) + ' — ein <b>Widerspruch</b>.')),
+      st('Ergebnis', '<b>' + opts[unendlich ? 0 : 1] + '</b>' + (unendlich
+        ? ' — eine Gleichung, zwei Unbekannte: eine ganze Gerade.' : ' — 𝕃 = { }'))
+    ]
+  };
+});
+
+/* ============================================================
+   VEKTORRECHNUNG
+   ============================================================ */
+
+const VC = vn('c');
+/* Rechenzeichen vor einem Bruch, damit nie „+ −3/x" entsteht */
+function bruchOp(v) { return ' <span class="op">' + (v < 0 ? MINUS : '+') + '</span> '; }
+/* „1 − 5/x" statt „1 + −5/x" */
+function konstPlusBruch(k, z, n) { return k + bruchOp(z) + fracHTML(Math.abs(z), n); }
+
+/* Statt zweier Vektoren ein zusammengesetzter Ausdruck — das Skalarprodukt
+   muss erst ausmultipliziert oder der Klammerinhalt zuerst gerechnet werden. */
+harden('vektor', 'skalar', 5, function (d) {
+  const n = d <= 6 ? 2 : 3;
+  const R = d <= 6 ? 7 : 9;
+  const a = [], b = [], c = [];
+  for (let i = 0; i < n; i++) { a.push(rnz(-R, R)); b.push(rnz(-R, R)); c.push(rnz(-R, R)); }
+  if (d >= 8 && coin(0.45)) {
+    /* |a + b|² über die binomische Formel */
+    const aa = a.reduce((s, x) => s + x * x, 0);
+    const bb = b.reduce((s, x) => s + x * x, 0);
+    const ab = a.reduce((s, x, i) => s + x * b[i], 0);
+    const res = aa + 2 * ab + bb;
+    return {
+      promptHTML: '<span class="big">' + VA + ' = ' + vec(a) + ' &nbsp; ' + VB + ' = ' + vec(b) + '</span>',
+      qtext: 'Berechne |' + VA + ' + ' + VB + '|² <b>ohne</b> die Summe auszurechnen.',
+      fields: [Fnum('|' + VA + ' + ' + VB + '|² =', 'ganze Zahl')], check: checkNum(res),
+      solHTML: '|' + VA + ' + ' + VB + '|² = ' + num(res),
+      steps: [
+        st('Binomische Formel für Vektoren', '|' + VA + ' + ' + VB + '|² = |' + VA + '|² + 2·(' + VA + ' · ' + VB
+          + ') + |' + VB + '|² — dasselbe Muster wie (a+b)² = a² + 2ab + b².'),
+        st('|' + VA + '|²', a.map(x => paren(x) + '²').join(' + ') + ' = ' + num(aa)),
+        st('|' + VB + '|²', b.map(x => paren(x) + '²').join(' + ') + ' = ' + num(bb)),
+        st('Skalarprodukt', a.map((x, i) => paren(x) + '·' + paren(b[i])).join(' + ') + ' = ' + num(ab)),
+        st('Zusammensetzen', num(aa) + ' + 2·' + paren(ab) + ' + ' + num(bb) + ' = <b>' + num(res) + '</b>')
+      ]
+    };
+  }
+  const k = rnz(-4, 4);
+  const bk = b.map((x, i) => x + k * c[i]);
+  const res = a.reduce((s, x, i) => s + x * bk[i], 0);
+  return {
+    promptHTML: '<span class="big">' + VA + ' = ' + vec(a) + ' &nbsp; ' + VB + ' = ' + vec(b) + ' &nbsp; ' + VC + ' = ' + vec(c) + '</span>',
+    qtext: 'Berechne ' + VA + ' · (' + VB + coefHTML(k, VC, false) + ').',
+    fields: [Fnum(VA + ' · (' + VB + coefHTML(k, VC, false) + ') =', 'ganze Zahl')], check: checkNum(res),
+    solHTML: num(res),
+    steps: [
+      st('Zuerst die Klammer', VB + coefHTML(k, VC, false) + ' = ' + vec(bk)),
+      st('Dann das Skalarprodukt', a.map((x, i) => paren(x) + '·' + paren(bk[i])).join(' + ') + ' = ' + num(res)),
+      st('Der zweite Weg', 'Das Skalarprodukt ist distributiv: ' + VA + '·' + VB + coefHTML(k, VA + '·' + VC, false)
+        + ' = ' + num(a.reduce((s, x, i) => s + x * b[i], 0)) + addHTML(k * a.reduce((s, x, i) => s + x * c[i], 0))
+        + ' = ' + num(res) + ' — dasselbe Ergebnis.'),
+      st('Ergebnis', '<b>' + num(res) + '</b>')
+    ]
+  };
+});
+
+/* Nicht der Betrag eines gegebenen Vektors, sondern der Abstand zweier
+   Punkte oder der Einheitsvektor — der Vektor muss erst gebildet werden. */
+harden('vektor', 'betrag', 5, function (d) {
+  const n = d <= 6 ? 2 : 3;
+  let t, len;
+  if (n === 2) { const tt = scaleTrip(pick(TRIP2), ri(1, 3)); t = [tt[0], tt[1]]; len = tt[2]; }
+  else {
+    const t0 = scaleTrip(pick(TRIP3), ri(1, 3));
+    const perm = [[0, 1, 2], [1, 2, 0], [2, 0, 1], [0, 2, 1]][ri(0, 3)];
+    t = [t0[perm[0]], t0[perm[1]], t0[perm[2]]]; len = t0[3];
+  }
+  const rich = t.map(x => x * (coin() ? 1 : -1));
+  if (d >= 8 && coin(0.45)) {
+    /* Einheitsvektor */
+    const e = rich.map(x => new F(x, len));
+    return {
+      promptHTML: '<span class="big">' + VA + ' = ' + vec(rich) + '</span>',
+      qtext: 'Bestimme den <b>Einheitsvektor</b> in Richtung von ' + VA + '.',
+      fields: [Fmat(n, 1, VA + '<sub>0</sub>')], check: checkMat(e.map(f => [f.v])),
+      solHTML: vecHTML(e.map(f => f.html())),
+      steps: [
+        st('Was ist ein Einheitsvektor?', 'Derselbe Pfeil, aber mit der Länge 1 — dafür wird durch den eigenen Betrag geteilt.'),
+        st('Betrag', '|' + VA + '| = ' + sqrtHTML(rich.map(x => paren(x) + '²').join(' + ')) + ' = '
+          + sqrtHTML(rich.reduce((s, x) => s + x * x, 0)) + ' = ' + len),
+        st('Teilen', VA + '<sub>0</sub> = ' + fracHTML(1, len) + '·' + vec(rich) + ' = ' + vecHTML(e.map(f => f.html()))),
+        st('Probe', 'Die Quadratsumme der neuen Einträge ist wieder 1.')
+      ]
+    };
+  }
+  /* Abstand zweier Punkte */
+  const P = []; for (let i = 0; i < n; i++) P.push(rnz(-9, 9));
+  const Q = P.map((x, i) => x + rich[i]);
+  const namen = ['x', 'y', 'z'];
+  return {
+    promptHTML: '<span class="big">P(' + P.map(num).join(' | ') + ') &nbsp; Q(' + Q.map(num).join(' | ') + ')</span>',
+    qtext: 'Wie weit sind P und Q voneinander entfernt?',
+    fields: [Fnum('|PQ| =', 'ganze Zahl')], check: checkNum(len), solHTML: '|PQ| = ' + len,
+    steps: [
+      st('Erst den Verbindungsvektor', 'Spitze minus Fuß: ' + vecHTML(Q.map((x, i) => num(x) + ' − ' + paren(P[i])))
+        + ' = ' + vec(rich)),
+      st('Dann den Betrag', sqrtHTML(rich.map(x => paren(x) + '²').join(' + ')) + ' = '
+        + sqrtHTML(rich.map(x => '' + x * x).join(' + '))),
+      st('Ergebnis', sqrtHTML(rich.reduce((s, x) => s + x * x, 0)) + ' = <b>' + len + '</b>'),
+      st('Merke', 'Die Reihenfolge P → Q oder Q → P ändert nur die Vorzeichen — der Abstand bleibt gleich.')
+    ]
+  };
+});
+
+/* Aus „senkrecht" wird „parallel" — und ab Stufe 8 steht t in beiden
+   Vektoren, dann wird die Bedingung quadratisch. */
+harden('vektor', 'ortho', 5, function (d) {
+  const n = d <= 6 ? 2 : 3;
+  if (d >= 8 && coin(0.45)) {
+    /* t in zwei Komponenten → quadratische Gleichung */
+    const a = []; for (let i = 0; i < n; i++) a.push(rnz(-6, 6));
+    const t1 = rnz(-6, 6);
+    let t2 = rnz(-6, 6);
+    if (t1 === t2) return null;
+    /* b = (t, …, t) an zwei Stellen, Rest fest → a·b = (a_i + a_j)t + Rest */
+    const i1 = 0, i2 = n - 1;
+    const koeff = a[i1] + a[i2];
+    if (koeff === 0) return null;
+    const restIdx = [];
+    for (let i = 0; i < n; i++) if (i !== i1 && i !== i2) restIdx.push(i);
+    const bRest = restIdx.map(() => rnz(-6, 6));
+    let rest = 0;
+    restIdx.forEach((idx, q) => { rest += a[idx] * bRest[q]; });
+    const sol = new F(-rest, koeff);
+    if (sol.d > 6 || Math.abs(sol.v) > 25) return null;
+    const bShow = [];
+    for (let i = 0; i < n; i++) {
+      if (i === i1 || i === i2) bShow.push('<i>t</i>');
+      else bShow.push(num(bRest[restIdx.indexOf(i)]));
+    }
+    return {
+      promptHTML: '<span class="big">' + VA + ' = ' + vec(a) + ' &nbsp; ' + VB + ' = ' + vecHTML(bShow) + '</span>',
+      qtext: 'Für welches <i>t</i> stehen ' + VA + ' und ' + VB + ' senkrecht aufeinander?',
+      fields: [Fnum('<i>t</i> =', P_PH)], check: checkNum(sol.v), solHTML: '<i>t</i> = ' + sol.html(),
+      steps: [
+        st('Bedingung', VA + ' · ' + VB + ' = 0'),
+        st('Skalarprodukt aufstellen', paren(a[i1]) + '·<i>t</i>'
+          + (restIdx.length ? restIdx.map((idx, q) => addHTML(paren(a[idx]) + '·' + paren(bRest[q]))).join('') : '')
+          + addHTML(paren(a[i2]) + '·<i>t</i>') + ' = 0'),
+        st('t zusammenfassen', 'Beide t-Terme gehören zusammen: ' + num(koeff) + '<i>t</i>' + addHTML(rest) + ' = 0'),
+        st('Auflösen', '<i>t</i> = ' + fracHTML(num(-rest), num(koeff)) + ' = <b>' + sol.html() + '</b>')
+      ]
+    };
+  }
+  /* parallel / kollinear */
+  const a = []; for (let i = 0; i < n; i++) a.push(rnz(-8, 8));
+  const kf = new F(rnz(-6, 6), pick([1, 1, 2]));
+  const b = a.map(x => kf.mul(x));
+  if (b.some(f => !f.isInt())) return null;
+  const stelle = ri(0, n - 1);
+  const bShow = b.map((f, i) => i === stelle ? '<i>t</i>' : num(f.v));
+  const sol = b[stelle];
+  const ref = [0, 1, 2].filter(i => i < n && i !== stelle && a[i] !== 0)[0];
+  if (ref === undefined) return null;
+  return {
+    promptHTML: '<span class="big">' + VA + ' = ' + vec(a) + ' &nbsp; ' + VB + ' = ' + vecHTML(bShow) + '</span>',
+    qtext: 'Für welches <i>t</i> sind ' + VA + ' und ' + VB + ' <b>parallel</b>?',
+    fields: [Fnum('<i>t</i> =', P_PH)], check: checkNum(sol.v), solHTML: '<i>t</i> = ' + sol.html(),
+    steps: [
+      st('Was heißt parallel?', 'Der eine Vektor ist ein <b>Vielfaches</b> des anderen: ' + VB + ' = k · ' + VA
+        + '. Das ist etwas anderes als senkrecht — dort wäre das Skalarprodukt null.'),
+      st('k aus einer bekannten Zeile', 'Zeile ' + (ref + 1) + ': ' + num(b[ref].v) + ' = k · ' + paren(a[ref])
+        + ' → k = ' + fracHTML(num(b[ref].v), num(a[ref])) + ' = ' + kf.html()),
+      st('k in die t-Zeile einsetzen', 'Zeile ' + (stelle + 1) + ': <i>t</i> = ' + parenH(kf.html()) + ' · '
+        + paren(a[stelle]) + ' = <b>' + sol.html() + '</b>'),
+      st('Probe', 'Mit diesem t sind alle Zeilen dasselbe Vielfache.')
+    ]
+  };
+});
+
+/* Das Kreuzprodukt als Werkzeug: Flaeche des Parallelogramms bzw. Volumen
+   des Spats — dafuer muss man wissen, wofuer es gut ist. */
+harden('vektor', 'kreuz', 5, function (d) {
+  const R = d <= 7 ? 5 : 8;
+  const a = [], b = [], c = [];
+  for (let i = 0; i < 3; i++) { a.push(rnz(-R, R)); b.push(rnz(-R, R)); c.push(rnz(-R, R)); }
+  const kr = [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  if (kr[0] === 0 && kr[1] === 0 && kr[2] === 0) return null;
+  if (d >= 7 && coin(0.55)) {
+    /* Spatprodukt → Volumen */
+    const sp = kr[0] * c[0] + kr[1] * c[1] + kr[2] * c[2];
+    if (sp === 0) return null;
+    const vol = Math.abs(sp);
+    if (vol > 2000) return null;
+    return {
+      promptHTML: '<span class="big">' + VA + ' = ' + vec(a) + ' &nbsp; ' + VB + ' = ' + vec(b) + ' &nbsp; ' + VC + ' = ' + vec(c) + '</span>',
+      qtext: 'Welches <b>Volumen</b> hat der von den drei Vektoren aufgespannte Spat?',
+      fields: [Fnum('V =', 'ganze Zahl')], check: checkNum(vol), solHTML: 'V = ' + vol,
+      steps: [
+        st('Das Werkzeug', 'Das Volumen ist der Betrag des <b>Spatprodukts</b> (' + VA + ' × ' + VB + ') · ' + VC + '.'),
+        st('Erst das Kreuzprodukt', VA + ' × ' + VB + ' = ' + vec(kr)),
+        st('Dann skalar mit ' + VC, kr.map((x, i) => paren(x) + '·' + paren(c[i])).join(' + ') + ' = ' + num(sp)),
+        st('Betrag nehmen', 'Ein negatives Spatprodukt bedeutet nur, dass die drei Vektoren ein Linkssystem bilden — '
+          + 'das Volumen ist <b>' + vol + '</b>.')
+      ]
+    };
+  }
+  /* Flaeche des Parallelogramms — Kreuzprodukt muss ein pythagoreisches Tripel sein */
+  let q = kr[0] * kr[0] + kr[1] * kr[1] + kr[2] * kr[2];
+  let w = Math.round(Math.sqrt(q));
+  if (w * w !== q) {
+    /* die Wurzel geht nicht auf — dann lieber das Spatprodukt fragen */
+    const c2 = [rnz(-R, R), rnz(-R, R), rnz(-R, R)];
+    const sp2 = kr[0] * c2[0] + kr[1] * c2[1] + kr[2] * c2[2];
+    if (sp2 === 0 || Math.abs(sp2) > 2000) return null;
+    const vol2 = Math.abs(sp2);
+    return {
+      promptHTML: '<span class="big">' + VA + ' = ' + vec(a) + ' &nbsp; ' + VB + ' = ' + vec(b) + ' &nbsp; ' + VC + ' = ' + vec(c2) + '</span>',
+      qtext: 'Welches <b>Volumen</b> hat der von den drei Vektoren aufgespannte Spat?',
+      fields: [Fnum('V =', 'ganze Zahl')], check: checkNum(vol2), solHTML: 'V = ' + vol2,
+      steps: [
+        st('Das Werkzeug', 'Das Volumen ist der Betrag des <b>Spatprodukts</b> (' + VA + ' × ' + VB + ') · ' + VC + '.'),
+        st('Erst das Kreuzprodukt', VA + ' × ' + VB + ' = ' + vec(kr)),
+        st('Dann skalar mit ' + VC, kr.map((x, i) => paren(x) + '·' + paren(c2[i])).join(' + ') + ' = ' + num(sp2)),
+        st('Betrag nehmen', 'Das Volumen ist <b>' + vol2 + '</b>.')
+      ]
+    };
+  }
+  return {
+    promptHTML: '<span class="big">' + VA + ' = ' + vec(a) + ' &nbsp; ' + VB + ' = ' + vec(b) + '</span>',
+    qtext: 'Welchen <b>Flächeninhalt</b> hat das von ' + VA + ' und ' + VB + ' aufgespannte Parallelogramm?',
+    fields: [Fnum('A =', 'ganze Zahl')], check: checkNum(w), solHTML: 'A = ' + w,
+    steps: [
+      st('Das Werkzeug', 'Die Fläche ist der <b>Betrag</b> des Kreuzprodukts — das Kreuzprodukt selbst ist ein Vektor, '
+        + 'die Fläche eine Zahl.'),
+      st('Kreuzprodukt', VA + ' × ' + VB + ' = ' + vec(kr)),
+      st('Betrag', sqrtHTML(kr.map(x => paren(x) + '²').join(' + ')) + ' = ' + sqrtHTML(q) + ' = <b>' + w + '</b>'),
+      st('Nebenbei', 'Das Dreieck aus denselben zwei Vektoren hätte die halbe Fläche.')
+    ]
+  };
+});
+
+/* ============================================================
+   MEHRDIMENSIONALE ANALYSIS
+   ============================================================ */
+
+/* Ein Monom bleibt ein Monom, egal wie gross die Exponenten werden.
+   Schwer wird es erst mit Bruch, Wurzel und Kette. */
+harden('partiell', 'monom', 5, function (d) {
+  const a = rnz(-6, 6);
+  const art = pick(d >= 8 ? ['bruch', 'wurzel', 'kette', 'kette'] : ['bruch', 'wurzel']);
+  if (art === 'bruch') {
+    /* f = a·x^m / y^n, gesucht ∂f/∂y  →  negativer Exponent */
+    const m = ri(1, 3), n = ri(1, 3);
+    const ref = (x, y) => -a * n * Math.pow(x, m) / Math.pow(y, n + 1);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + fracHTML(coefHTML(a, pw(V(), m), true), pw(Y(), n)) + '</span>',
+      qtext: 'Bestimme ∂f/∂' + Y() + '.',
+      fields: [Fexpr('∂f/∂' + Y() + ' =', 'z. B. -6x^2/y^3')], check: checkExpr2(ref, { lo: 0.6, hi: 2.4 }),
+      solHTML: '∂f/∂' + Y() + ' = ' + fracHTML(coefHTML(-a * n, pw(V(), m), true), pw(Y(), n + 1)),
+      steps: [
+        st('Erst umschreiben', 'Ein y im Nenner ist eine <b>negative</b> Potenz: f = ' + coefHTML(a, pw(V(), m), true)
+          + '·' + Y() + '<sup>−' + n + '</sup>'),
+        st('x ist Konstante', coefHTML(a, pw(V(), m), true) + ' bleibt als Vorfaktor stehen.'),
+        st('Potenzregel', '∂/∂y (y<sup>−' + n + '</sup>) = ' + num(-n) + '·y<sup>−' + (n + 1) + '</sup>'),
+        st('Ergebnis', '<b>' + fracHTML(coefHTML(-a * n, pw(V(), m), true), pw(Y(), n + 1)) + '</b>')
+      ]
+    };
+  }
+  if (art === 'wurzel') {
+    /* f = a·y^n·√x, gesucht ∂f/∂x */
+    const n = ri(1, 3);
+    const ref = (x, y) => a * Math.pow(y, n) / (2 * Math.sqrt(x));
+    return {
+      promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + coefHTML(a, pw(Y(), n), true) + '·' + sqrtHTML(V()) + '</span>',
+      qtext: 'Bestimme ∂f/∂' + V() + '.',
+      fields: [Fexpr('∂f/∂' + V() + ' =', 'z. B. 3y^2/(2*sqrt(x))')], check: checkExpr2(ref, { lo: 0.4, hi: 2.4 }),
+      solHTML: '∂f/∂' + V() + ' = ' + fracHTML(coefHTML(a, pw(Y(), n), true), '2' + sqrtHTML(V())),
+      steps: [
+        st('Wurzel als Potenz', sqrtHTML(V()) + ' = ' + V() + '<sup>1/2</sup> — anders lässt sich die Potenzregel nicht anwenden.'),
+        st('y ist Konstante', coefHTML(a, pw(Y(), n), true) + ' bleibt stehen.'),
+        st('Potenzregel', '∂/∂x (x<sup>1/2</sup>) = ' + fracHTML(1, 2) + '·x<sup>−1/2</sup> = ' + fracHTML(1, '2' + sqrtHTML(V()))),
+        st('Ergebnis', '<b>' + fracHTML(coefHTML(a, pw(Y(), n), true), '2' + sqrtHTML(V())) + '</b>')
+      ]
+    };
+  }
+  /* f = a·(x² + k y)^n, gesucht ∂f/∂x → Kettenregel */
+  const n = ri(2, 3), k = rnz(-4, 4);
+  const ref = (x, y) => a * n * Math.pow(x * x + k * y, n - 1) * 2 * x;
+  const innen = V() + '<sup>2</sup>' + coefHTML(k, Y(), false);
+  return {
+    promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + coefHTML(a, '(' + innen + ')<sup>' + n + '</sup>', true) + '</span>',
+    qtext: 'Bestimme ∂f/∂' + V() + '.',
+    fields: [Fexpr('∂f/∂' + V() + ' =')], check: checkExpr2(ref, { lo: 0.7, hi: 2.2 }),
+    solHTML: '∂f/∂' + V() + ' = ' + coefHTML(2 * a * n, V(), true) + '·(' + innen + ')<sup>' + (n - 1) + '</sup>',
+    steps: [
+      st('Kettenregel auch hier', 'Die Klammer ist die innere Funktion — beim partiellen Ableiten gilt die Kettenregel genauso.'),
+      st('Innere Ableitung nach x', '∂/∂x (' + innen + ') = ' + coefHTML(2, V(), true)
+        + ' — der Term mit y fällt weg, weil y hier konstant ist.'),
+      st('Äußere Ableitung', coefHTML(a * n, '(' + innen + ')<sup>' + (n - 1) + '</sup>', true)),
+      st('Ergebnis', '<b>' + coefHTML(2 * a * n, V(), true) + '·(' + innen + ')<sup>' + (n - 1) + '</sup></b>')
+    ]
+  };
+});
+
+/* e und ln mit gemischtem Argument: jetzt haengt der Exponent von beiden
+   Variablen ab, und es kommt die Produktregel dazu. */
+harden('partiell', 'expln', 5, function (d) {
+  const a = rnz(-5, 5);
+  const art = pick(d >= 8 ? ['exy', 'produkt', 'ln2'] : ['exy', 'ln2']);
+  if (art === 'exy') {
+    /* f = a·e^(k x y), gesucht ∂f/∂x */
+    const k = rnz(-3, 3);
+    const ref = (x, y) => a * k * y * Math.exp(k * x * y);
+    const arg = coefHTML(k, V() + Y(), true);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + coefHTML(a, 'e<sup>' + arg + '</sup>', true) + '</span>',
+      qtext: 'Bestimme ∂f/∂' + V() + '.',
+      fields: [Fexpr('∂f/∂' + V() + ' =', 'z. B. 2y*e^(2xy)')], check: checkExpr2(ref, { lo: 0.3, hi: 1.2 }),
+      solHTML: '∂f/∂' + V() + ' = ' + coefHTML(a * k, Y() + '·e<sup>' + arg + '</sup>', true),
+      steps: [
+        st('Das y bleibt im Exponenten', 'Anders als bei e<sup>ky</sup>·x<sup>n</sup> steht y hier <b>im</b> Exponenten — '
+          + 'es wird zum Faktor der inneren Ableitung.'),
+        st('Innere Ableitung nach x', '∂/∂x (' + arg + ') = ' + coefHTML(k, Y(), true)),
+        st('Kettenregel', coefHTML(a, 'e<sup>' + arg + '</sup>', true) + ' · ' + parenH(coefHTML(k, Y(), true))),
+        st('Ergebnis', '<b>' + coefHTML(a * k, Y() + '·e<sup>' + arg + '</sup>', true) + '</b>')
+      ]
+    };
+  }
+  if (art === 'produkt') {
+    /* f = a·x^m·y^n·e^(k x), gesucht ∂f/∂x → Produktregel plus Kette */
+    const m = ri(1, 2), n = ri(1, 2), k = rnz(-3, 3);
+    const arg = coefHTML(k, V(), true);
+    const ref2 = (x, y) => a * Math.pow(y, n) * Math.pow(x, m - 1) * Math.exp(k * x) * (m + k * x);
+    const yTeil = pw(Y(), n);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = '
+        + coefHTML(a, pw(V(), m) + yTeil + '·e<sup>' + arg + '</sup>', true) + '</span>',
+      qtext: 'Bestimme ∂f/∂' + V() + '.',
+      fields: [Fexpr('∂f/∂' + V() + ' =')], check: checkExpr2(ref2, { lo: 0.4, hi: 1.4 }),
+      solHTML: '∂f/∂' + V() + ' = ' + coefHTML(a, yTeil + pw(V(), m - 1) + '·e<sup>' + arg + '</sup>·('
+        + m + coefHTML(k, V(), false) + ')', true),
+      steps: [
+        st('Zwei Faktoren mit x', 'Sowohl ' + pw(V(), m) + ' als auch e<sup>' + arg
+          + '</sup> hängen von x ab → <b>Produktregel</b>. ' + yTeil + ' ist dabei nur ein Vorfaktor.'),
+        st('u und v', 'u = ' + pw(V(), m) + ' → u′ = ' + coefHTML(m, pw(V(), m - 1), true) + '<br>v = e<sup>' + arg
+          + '</sup> → v′ = ' + coefHTML(k, 'e<sup>' + arg + '</sup>', true)),
+        st('u′v + uv′', coefHTML(a * m, yTeil + pw(V(), m - 1) + '·e<sup>' + arg + '</sup>', true)
+          + coefHTML(a * k, yTeil + pw(V(), m) + '·e<sup>' + arg + '</sup>', false)),
+        st('Ausklammern', '<b>' + coefHTML(a, yTeil + pw(V(), m - 1) + '·e<sup>' + arg + '</sup>·('
+          + m + coefHTML(k, V(), false) + ')', true) + '</b>')
+      ]
+    };
+  }
+  /* f = a·ln(x² + k y), gesucht ∂f/∂x */
+  const k = rnz(1, 5);
+  const ref = (x, y) => a * 2 * x / (x * x + k * y);
+  const innen = V() + '<sup>2</sup> + ' + coefHTML(k, Y(), true);
+  return {
+    promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + coefHTML(a, 'ln(' + innen + ')', true) + '</span>',
+    qtext: 'Bestimme ∂f/∂' + V() + '.',
+    fields: [Fexpr('∂f/∂' + V() + ' =', 'z. B. 2x/(x^2+3y)')], check: checkExpr2(ref, { lo: 0.5, hi: 2.2 }),
+    solHTML: '∂f/∂' + V() + ' = ' + fracHTML(coefHTML(2 * a, V(), true), innen),
+    steps: [
+      st('Ableitung des Logarithmus', '(ln u)′ = ' + fracHTML('u′', 'u') + ' — der Nenner ist der <b>unveränderte</b> Klammerinhalt.'),
+      st('Innere Ableitung nach x', '∂/∂x (' + innen + ') = ' + coefHTML(2, V(), true) + ' (y ist konstant)'),
+      st('Zusammensetzen', coefHTML(a, '', true) + '·' + fracHTML(coefHTML(2, V(), true), innen)),
+      st('Ergebnis', '<b>' + fracHTML(coefHTML(2 * a, V(), true), innen) + '</b>')
+    ]
+  };
+});
+
+/* Die gemischte zweite Ableitung f_xy — und der Satz von Schwarz. */
+harden('partiell', 'zweite', 5, function (d) {
+  const a = rnz(-4, 4), b = rnz(-4, 4), c = rnz(-4, 4);
+  const m = ri(2, 3), n = ri(2, 3);
+  /* f = a x^m y^n + b x^2 y + c y^2 */
+  const terms = [[a, m, n], [b, 2, 1], [c, 0, 2]];
+  const fxy = [[a * m * n, m - 1, n - 1], [b * 2, 1, 0]];
+  const ref = (x, y) => a * m * n * Math.pow(x, m - 1) * Math.pow(y, n - 1) + 2 * b * x;
+  return {
+    promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + fxyHTML(terms) + '</span>',
+    qtext: 'Bestimme die <b>gemischte</b> zweite Ableitung f<sub>xy</sub>.',
+    fields: [Fexpr('f<sub>xy</sub> =')], check: checkExpr2(ref, { lo: 0.6, hi: 2.3 }),
+    solHTML: 'f<sub>xy</sub> = ' + fxyHTML(fxy),
+    steps: [
+      st('Zwei Schritte', 'f<sub>xy</sub> heißt: <b>erst</b> nach x ableiten, <b>dann</b> das Ergebnis nach y.'),
+      st('Erster Schritt', 'f<sub>x</sub> = ' + fxyHTML(dXY(terms, 1)) + ' — der reine y-Term fällt weg.'),
+      st('Zweiter Schritt', 'f<sub>xy</sub> = ' + fxyHTML(fxy)),
+      st('Satz von Schwarz', 'Die andere Reihenfolge (erst y, dann x) führt zum selben Ergebnis — man darf also den '
+        + 'bequemeren Weg wählen.'),
+      st('Ergebnis', '<b>' + fxyHTML(fxy) + '</b>')
+    ]
+  };
+});
+
+/* Der Gradient einer Funktion, die nicht mehr nur aus Monomen besteht. */
+harden('gradient', 'punkt', 5, function (d) {
+  const a = rnz(-4, 4), k = rnz(-2, 2), b = rnz(-5, 5);
+  if (k === 0) return null;
+  const x0 = rnz(-3, 3), y0 = rnz(-3, 3);
+  /* f = a·x^2·y^2 + b·x·y + k·x  → Gradient an der Stelle, ganzzahlig */
+  const terms = [[a, 2, 2], [b, 1, 1], [k, 1, 0]];
+  const fx = dXY(terms, 1), fy = dXY(terms, 2);
+  const evalT = (ts, x, y) => ts.reduce((s, t) => s + t[0] * Math.pow(x, t[1]) * Math.pow(y, t[2]), 0);
+  const gx = evalT(fx, x0, y0), gy = evalT(fy, x0, y0);
+  if (Math.abs(gx) > 400 || Math.abs(gy) > 400) return null;
+  return {
+    promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + fxyHTML(terms) + '</span>',
+    qtext: 'Gradient an der Stelle P(' + num(x0) + ' | ' + num(y0) + ')',
+    fields: [Fmat(2, 1, 'grad f(P)')], check: checkMat([[gx], [gy]]),
+    solHTML: 'grad f(P) = ' + vec([gx, gy]),
+    steps: [
+      st('Beide Ableitungen', 'f<sub>x</sub> = ' + fxyHTML(fx) + '<br>f<sub>y</sub> = ' + fxyHTML(fy)),
+      st('Erst ableiten, dann einsetzen', 'Wer zuerst einsetzt, leitet nur noch eine Zahl ab — das ergibt 0.'),
+      st('f<sub>x</sub>(P)', '= ' + num(gx)),
+      st('f<sub>y</sub>(P)', '= ' + num(gy)),
+      st('Ergebnis', 'grad f(P) = <b>' + vec([gx, gy]) + '</b> — der Vektor zeigt in die Richtung des steilsten Anstiegs.')
+    ]
+  };
+});
+
+/* Kritische Stellen, bei denen das Gleichungssystem nicht mehr linear ist. */
+harden('extrem2d', 'kritisch', 6, function (d) {
+  /* f = x³ − 3a²x + y² + c y  →  f_x = 3x² − 3a² = 0 → x = ±a (zwei Stellen) */
+  const a = ri(1, 4), c = rnz(-4, 4) * 2;
+  const y0 = -c / 2;
+  const gesucht = coin(0.5) ? a : -a;
+  const terms = [[1, 3, 0], [-3 * a * a, 1, 0], [1, 0, 2], [c, 0, 1]];
+  const fx = dXY(terms, 1), fy = dXY(terms, 2);
+  const art = gesucht > 0 ? 'Minimum' : 'Sattelpunkt';
+  return {
+    promptHTML: '<span class="big">f(' + V() + ', ' + Y() + ') = ' + fxyHTML(terms) + '</span>',
+    qtext: 'Es gibt <b>zwei</b> kritische Stellen. Bestimme die mit ' + V() + ' ' + (gesucht > 0 ? '&gt; 0' : '&lt; 0') + '.',
+    fields: [Fnum('<i>x</i><sub>0</sub> =', 'Zahl'), Fnum('<i>y</i><sub>0</sub> =', 'Zahl')],
+    check: checkMulti([gesucht, y0]),
+    solHTML: 'P(' + num(gesucht) + ' | ' + num(y0) + ')',
+    steps: [
+      st('Beide Ableitungen null setzen', 'f<sub>x</sub> = ' + fxyHTML(fx) + ' = 0<br>f<sub>y</sub> = ' + fxyHTML(fy) + ' = 0'),
+      st('f<sub>x</sub> ist quadratisch', '3' + V() + '² = ' + (3 * a * a) + ' → ' + V() + '² = ' + (a * a)
+        + ' → ' + V() + ' = ' + a + ' <b>oder</b> ' + V() + ' = ' + num(-a)
+        + '<br><span class="muted">Genau hier entstehen zwei Stellen statt einer.</span>'),
+      st('f<sub>y</sub> ist linear', '2' + Y() + addHTML(c) + ' = 0 → ' + Y() + ' = ' + num(y0)),
+      st('Die gesuchte Stelle', 'P(' + num(gesucht) + ' | ' + num(y0) + ')'),
+      st('Zur Einordnung', 'f<sub>xx</sub> = 6' + V() + ' hängt von x ab — deshalb sind die beiden Stellen von '
+        + '<b>verschiedener Art</b>: hier ein ' + art + '.')
+    ]
+  };
+});
+
+/* Lagrange von der anderen Seite: nicht Nutzen maximieren, sondern
+   Kosten minimieren bei vorgegebenem Nutzen. */
+harden('lagrange', 'kosten', 6, function (d) {
+  const p = ri(1, 6), q = ri(1, 6);
+  if (p === q) return null;
+  const x0 = ri(2, 12) * q, y0 = x0 * p / q;
+  if (!Number.isInteger(y0) || y0 > 200) return null;
+  const C = x0 * y0;
+  const K = p * x0 + q * y0;
+  return {
+    promptHTML: '<span class="big">Kosten K = ' + p + V() + ' + ' + q + Y() + ' minimieren<br>unter '
+      + V() + ' · ' + Y() + ' = ' + C + '</span>', mid: true,
+    qtext: 'Bestimme die kostenminimale Kombination.',
+    fields: [Fnum('<i>x</i> =', 'Zahl'), Fnum('<i>y</i> =', 'Zahl')],
+    check: checkMulti([x0, y0]), solHTML: V() + ' = ' + x0 + ', ' + Y() + ' = ' + y0 + ' (K = ' + K + ')',
+    steps: [
+      st('Lagrange-Funktion', 'L = ' + p + V() + ' + ' + q + Y() + ' − λ·(' + V() + Y() + ' − ' + C + ')'),
+      st('Ableitungen', 'L<sub>x</sub> = ' + p + ' − λ' + Y() + ' = 0<br>L<sub>y</sub> = ' + q + ' − λ' + V() + ' = 0'),
+      st('λ eliminieren', 'λ = ' + fracHTML(p, Y()) + ' = ' + fracHTML(q, V()) + ' → ' + p + V() + ' = ' + q + Y()
+        + ' → ' + Y() + ' = ' + fracHTML(p, q) + V()),
+      st('In die Nebenbedingung', V() + ' · ' + fracHTML(p, q) + V() + ' = ' + C + ' → ' + V() + '² = '
+        + fracHTML(q * C, p) + ' = ' + (x0 * x0) + ' → ' + V() + ' = <b>' + x0 + '</b>'),
+      st('Ergebnis', V() + ' = ' + x0 + ', ' + Y() + ' = ' + y0 + ' mit K = ' + K
+        + '<br><span class="muted">Bei der Nutzenmaximierung ist es genau umgekehrt: dort ist das Budget fest und der Nutzen frei.</span>')
+    ]
+  };
+});
+
+/* ============================================================
+   ANALYSIS · GRENZWERTE
+   ============================================================ */
+
+/* Typ 0/0, aber der gemeinsame Faktor liegt tiefer: erst Polynomdivision
+   oder das Ausklammern eines quadratischen Faktors macht ihn sichtbar. */
+harden('grenzwert', 'null', 5, function (d) {
+  const a = rnz(-6, 6);
+  if (d >= 8 && coin(0.5)) {
+    /* (x³ − a³)/(x − a) → 3a²   bzw. kubischer Zaehler mit doppelter Nullstelle */
+    const res = 3 * a * a;
+    return {
+      promptHTML: limPrompt(fracHTML(polyHTML([1, 0, 0, -a * a * a]), polyHTML([1, -a])), num(a)),
+      fields: [Fnum('Grenzwert =')], check: checkNum(res), solHTML: num(res),
+      plot: { fns: [{ f: x => (x * x * x - a * a * a) / (x - a), label: 'f' }], hlines: [{ y: res }], points: [{ x: a, y: res }] },
+      steps: [
+        st('Einsetzen scheitert', 'Für x = ' + num(a) + ' entsteht ' + fracHTML('0', '0') + '.'),
+        st('Die binomische Formel reicht nicht', 'x³ − a³ ist keine dritte binomische Formel — hier hilft die '
+          + '<b>Polynomdivision</b> durch (x − ' + paren(a) + ').'),
+        st('Polynomdivision', '(' + polyHTML([1, 0, 0, -a * a * a]) + ') : (' + polyHTML([1, -a]) + ') = '
+          + polyHTML([1, a, a * a])),
+        st('Einsetzen', num(a) + '² ' + (a >= 0 ? '+ ' + a : '− ' + (-a)) + '·' + paren(a) + ' + ' + (a * a)
+          + ' = <b>' + num(res) + '</b>')
+      ]
+    };
+  }
+  /* (x² + px + q)/(x² + rx + s) mit gemeinsamer Nullstelle a — beide Seiten faktorisieren */
+  let b = rnz(-8, 8), c = rnz(-8, 8);
+  if (b === a || c === a || b === c) return null;
+  const res = new F(a - b, a - c);
+  if (res.d > 12) return null;
+  const Z = polyHTML([1, -(a + b), a * b]), N = polyHTML([1, -(a + c), a * c]);
+  return {
+    promptHTML: limPrompt(fracHTML(Z, N), num(a)),
+    fields: [Fnum('Grenzwert =')], check: checkNum(res.v), solHTML: res.html(),
+    plot: {
+      fns: [{ f: x => ((x - a) * (x - b)) / ((x - a) * (x - c)), label: 'f' }],
+      hlines: [{ y: res.v }], points: [{ x: a, y: res.v }]
+    },
+    steps: [
+      st('Einsetzen scheitert', 'Für x = ' + num(a) + ' werden <b>Zähler und Nenner</b> null.'),
+      st('Beide Seiten faktorisieren', fracHTML('(' + polyHTML([1, -a]) + ')(' + polyHTML([1, -b]) + ')',
+        '(' + polyHTML([1, -a]) + ')(' + polyHTML([1, -c]) + ')')
+        + '<br><span class="muted">Der gemeinsame Faktor steht erst nach dem Faktorisieren da.</span>'),
+      st('Kürzen', '= ' + fracHTML(polyHTML([1, -b]), polyHTML([1, -c])) + ' für x ≠ ' + num(a)),
+      st('Jetzt einsetzen', fracHTML(num(a) + ' − ' + paren(b), num(a) + ' − ' + paren(c)) + ' = '
+        + fracHTML(num(a - b), num(a - c)) + ' = <b>' + res.html() + '</b>')
+    ]
+  };
+});
+
+/* Wurzelterme: nicht mehr √(x²+ax) − x, sondern zwei Wurzeln bzw. eine
+   Wurzel an einer 0/0-Stelle. */
+harden('grenzwert', 'wurzel', 5, function (d) {
+  if (d >= 7 && coin(0.5)) {
+    /* (√(x + a) − b)/(x − c) mit b² = a + c → Typ 0/0 mit Wurzel */
+    const b = ri(2, 6), c = rnz(-8, 8);
+    const a = b * b - c;
+    const res = new F(1, 2 * b);
+    return {
+      promptHTML: limPrompt(fracHTML(sqrtHTML(polyHTML([1, a])) + ' − ' + b, polyHTML([1, -c])), num(c)),
+      fields: [Fnum('Grenzwert =')], check: checkNum(res.v), solHTML: res.html(),
+      plot: {
+        fns: [{ f: x => (Math.sqrt(x + a) - b) / (x - c), label: 'f' }],
+        hlines: [{ y: res.v }], points: [{ x: c, y: res.v }]
+      },
+      steps: [
+        st('Typ 0/0', 'Für x = ' + num(c) + ' ist ' + sqrtHTML(num(c) + ' + ' + paren(a)) + ' = ' + b
+          + ', der Zähler also 0 — und der Nenner ebenfalls.'),
+        st('Konjugiert erweitern', 'Mit ' + sqrtHTML(polyHTML([1, a])) + ' + ' + b + ' erweitern — die dritte '
+          + 'binomische Formel macht die Wurzel im Zähler weg.'),
+        st('Zähler wird einfach', '(' + polyHTML([1, a]) + ') − ' + (b * b) + ' = ' + polyHTML([1, -c])
+          + ' — genau der Nenner.'),
+        st('Kürzen', '= ' + fracHTML(1, sqrtHTML(polyHTML([1, a])) + ' + ' + b)),
+        st('Einsetzen', fracHTML(1, b + ' + ' + b) + ' = <b>' + res.html() + '</b>')
+      ]
+    };
+  }
+  /* √(x² + ax) − √(x² + bx) → (a − b)/2 */
+  let a = rnz(-12, 12), b = rnz(-12, 12);
+  if (a === b) return null;
+  const res = new F(a - b, 2);
+  return {
+    promptHTML: limPrompt(sqrtHTML(polyHTML([1, a, 0])) + ' <span class="op">−</span> ' + sqrtHTML(polyHTML([1, b, 0])), '∞'),
+    fields: [Fnum('Grenzwert =')], check: checkNum(res.v), solHTML: res.html(),
+    plot: { fns: [{ f: x => Math.sqrt(x * x + a * x) - Math.sqrt(x * x + b * x), label: 'f' }], hlines: [{ y: res.v }] },
+    steps: [
+      st('Zweimal ∞', 'Beide Wurzeln wachsen über alle Grenzen — ∞ − ∞ ist unbestimmt, und diesmal steht hinten kein '
+        + 'bequemes x, sondern eine <b>zweite Wurzel</b>.'),
+      st('Konjugiert erweitern', 'Mit ' + sqrtHTML(polyHTML([1, a, 0])) + ' + ' + sqrtHTML(polyHTML([1, b, 0])) + ' erweitern.'),
+      st('Zähler', '(' + polyHTML([1, a, 0]) + ') − (' + polyHTML([1, b, 0]) + ') = ' + polyHTML([a - b, 0])
+        + ' — die x² heben sich weg.'),
+      st('x ausklammern', fracHTML(polyHTML([a - b, 0]), sqrtHTML(polyHTML([1, a, 0])) + ' + ' + sqrtHTML(polyHTML([1, b, 0])))
+        + ' = ' + fracHTML(num(a - b), sqrtHTML(konstPlusBruch(1, a, V())) + ' + ' + sqrtHTML(konstPlusBruch(1, b, V())))),
+      st('Grenzwert', 'Die Brüche im Nenner gehen gegen 0: ' + fracHTML(num(a - b), '1 + 1') + ' = <b>' + res.html() + '</b>')
+    ]
+  };
+});
+
+/* Polstellen: erst muss der Nenner faktorisiert und das Vorzeichen der
+   Annaeherung geprueft werden. */
+harden('grenzwert', 'polstelle', 5, function (d) {
+  const a = rnz(-6, 6);
+  let b = rnz(-6, 6);
+  if (a === b) return null;
+  const c = rnz(-5, 5);
+  const vonRechts = coin(0.5);
+  if (d >= 8) {
+    /* c/((x − a)(x − b)) — Nenner erst faktorisieren, dann Vorzeichen prüfen */
+    const nen = polyHTML([1, -(a + b), a * b]);
+    /* Grenzwert bei x → a: Vorzeichen von c/(x−b) mal Vorzeichen von (x−a) */
+    const vzRest = (a - b) > 0 ? 1 : -1;
+    const vz = Math.sign(c) * vzRest * (vonRechts ? 1 : -1);
+    const res = vz > 0 ? Infinity : -Infinity;
+    return {
+      promptHTML: limPrompt(fracHTML(num(c), nen), num(a) + (vonRechts ? '⁺' : '⁻')),
+      fields: [Fnum('Grenzwert =', 'Zahl, ∞ oder -∞')], check: checkNum(res), solHTML: res > 0 ? '+∞' : MINUS + '∞',
+      plot: { fns: [{ f: x => c / ((x - a) * (x - b)), label: 'f' }], hlines: [{ y: 0 }] },
+      steps: [
+        st('Nenner faktorisieren', nen + ' = (' + polyHTML([1, -a]) + ')(' + polyHTML([1, -b]) + ') — die Polstellen liegen '
+          + 'bei ' + num(a) + ' und ' + num(b) + '.'),
+        st('Der harmlose Faktor', 'Für x → ' + num(a) + ' geht (' + polyHTML([1, -b]) + ') gegen ' + num(a - b)
+          + ' — das ist ' + (a - b > 0 ? 'positiv' : 'negativ') + ' und ändert sich nicht mehr.'),
+        st('Der kritische Faktor', '(' + polyHTML([1, -a]) + ') geht gegen 0, und zwar von '
+          + (vonRechts ? '<b>oben</b> (positiv)' : '<b>unten</b> (negativ)') + ' — genau deshalb steht am Grenzwert '
+          + (vonRechts ? '⁺' : '⁻') + '.'),
+        st('Vorzeichen zusammensetzen', 'Zähler ' + (c > 0 ? '+' : '−') + ', Faktor ' + (a - b > 0 ? '+' : '−')
+          + ', Faktor ' + (vonRechts ? '+' : '−') + ' → insgesamt ' + (vz > 0 ? '+' : '−')),
+        st('Ergebnis', '<b>' + (res > 0 ? '+∞' : MINUS + '∞') + '</b>')
+      ]
+    };
+  }
+  /* c·(x − b)/(x − a)³ — ungerade Ordnung, einseitig */
+  const vz = Math.sign(c) * Math.sign(a - b) * (vonRechts ? 1 : -1);
+  const res = vz > 0 ? Infinity : -Infinity;
+  return {
+    promptHTML: limPrompt(fracHTML(coefHTML(c, '(' + polyHTML([1, -b]) + ')', true), '(' + polyHTML([1, -a]) + ')<sup>3</sup>'),
+      num(a) + (vonRechts ? '⁺' : '⁻')),
+    fields: [Fnum('Grenzwert =', 'Zahl, ∞ oder -∞')], check: checkNum(res), solHTML: res > 0 ? '+∞' : MINUS + '∞',
+    plot: { fns: [{ f: x => c * (x - b) / Math.pow(x - a, 3), label: 'f' }], hlines: [{ y: 0 }] },
+    steps: [
+      st('Ungerade Ordnung', 'Der Nenner hat den Exponenten <b>3</b> — er wechselt beim Durchgang durch ' + num(a)
+        + ' das Vorzeichen. Deshalb muss die Seite angegeben werden.'),
+      st('Von welcher Seite?', 'x → ' + num(a) + (vonRechts ? '⁺ bedeutet: x ist etwas <b>größer</b> als ' + num(a)
+        + ', also ist (' + polyHTML([1, -a]) + ')³ positiv.'
+        : '⁻ bedeutet: x ist etwas <b>kleiner</b> als ' + num(a) + ', also ist (' + polyHTML([1, -a]) + ')³ negativ.')),
+      st('Zähler an der Stelle', coefHTML(c, '(' + num(a) + ' − ' + paren(b) + ')', true) + ' = ' + num(c * (a - b))
+        + ' — konstant und ' + (c * (a - b) > 0 ? 'positiv' : 'negativ') + '.'),
+      st('Ergebnis', '<b>' + (res > 0 ? '+∞' : MINUS + '∞') + '</b>')
+    ]
+  };
+});
+
+/* x → ∞ mit Wurzel: der Grad einer Wurzel ist nur die Haelfte. */
+harden('grenzwert', 'unendlich', 6, function (d) {
+  const a = rnz(-9, 9), b = rnz(-9, 9), c = rnz(1, 9);
+  /* √(a²x² + bx) / (cx + …) → |a|/c   —  a² sorgt fuer eine glatte Wurzel */
+  const A = Math.abs(a) || 2;
+  const res = new F(A, c);
+  const e = rnz(-9, 9);
+  return {
+    promptHTML: limPrompt(fracHTML(sqrtHTML(polyHTML([A * A, b, 0])), polyHTML([c, e])), '∞'),
+    fields: [Fnum('Grenzwert =')], check: checkNum(res.v), solHTML: res.html(),
+    plot: { fns: [{ f: x => Math.sqrt(A * A * x * x + b * x) / (c * x + e), label: 'f' }], hlines: [{ y: res.v }] },
+    steps: [
+      st('Grad zählen — aber richtig', 'Unter der Wurzel steht x², die Wurzel selbst wächst also wie <b>x</b>, nicht wie x². '
+        + 'Zähler und Nenner haben damit denselben Grad 1.'),
+      st('x ausklammern', 'Zähler: ' + sqrtHTML(polyHTML([A * A, b, 0])) + ' = ' + V() + '·'
+        + sqrtHTML(konstPlusBruch(A * A, b, V()))
+        + '<br>Nenner: ' + V() + '·(' + konstPlusBruch(num(c), e, V()) + ')'),
+      st('Kürzen', '= ' + fracHTML(sqrtHTML(konstPlusBruch(A * A, b, V())), konstPlusBruch(num(c), e, V()))),
+      st('Grenzwert', 'Die Brüche gehen gegen 0: ' + fracHTML(sqrtHTML(A * A), num(c)) + ' = '
+        + fracHTML(A, c) + ' = <b>' + res.html() + '</b>')
+    ]
+  };
+});
+
+/* ============================================================
+   ANALYSIS · ABLEITUNGEN
+   ============================================================ */
+
+/* Produktregel wird erst schwer, wenn ein Faktor selbst eine Kette ist
+   oder e/ln im Spiel sind — zwei Polynome bleiben zwei Polynome. */
+harden('ableitung', 'produkt', 5, function (d) {
+  const a = rnz(-4, 4), b = rnz(-6, 6), k = rnz(-3, 3), m = ri(1, 3);
+  const art = pick(d >= 8 ? ['exp', 'ln', 'kette'] : ['exp', 'ln']);
+  if (art === 'exp') {
+    /* f = a·x^m·e^(kx) */
+    const f = x => a * Math.pow(x, m) * Math.exp(k * x);
+    const df = x => a * Math.pow(x, m - 1) * Math.exp(k * x) * (m + k * x);
+    const arg = coefHTML(k, V(), true);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = ' + coefHTML(a, pw(V(), m) + '·e<sup>' + arg + '</sup>', true) + '</span>',
+      qtext: 'Bestimme f′(x).',
+      fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: 0.3, hi: 1.6 }), _f: f,
+      solHTML: 'f′(' + V() + ') = ' + coefHTML(a, pw(V(), m - 1) + '·e<sup>' + arg + '</sup>·(' + m + coefHTML(k, V(), false) + ')', true),
+      steps: [
+        st('u und v', 'u = ' + pw(V(), m) + ' → u′ = ' + coefHTML(m, pw(V(), m - 1), true) + '<br>v = e<sup>' + arg
+          + '</sup> → v′ = ' + coefHTML(k, 'e<sup>' + arg + '</sup>', true) + ' (Kettenregel im zweiten Faktor)'),
+        st('Produktregel', 'f′ = u′v + uv′ = ' + coefHTML(a * m, pw(V(), m - 1) + '·e<sup>' + arg + '</sup>', true)
+          + coefHTML(a * k, pw(V(), m) + '·e<sup>' + arg + '</sup>', false)),
+        st('Ausklammern lohnt sich', 'e<sup>' + arg + '</sup> und ' + pw(V(), m - 1)
+          + ' stecken in beiden Summanden — ausgeklammert wird die Ableitung viel kürzer.'),
+        st('Ergebnis', '<b>' + coefHTML(a, pw(V(), m - 1) + '·e<sup>' + arg + '</sup>·(' + m + coefHTML(k, V(), false) + ')', true) + '</b>')
+      ]
+    };
+  }
+  if (art === 'ln') {
+    /* f = a·x^m·ln(x) */
+    const f = x => a * Math.pow(x, m) * Math.log(x);
+    const df = x => a * Math.pow(x, m - 1) * (m * Math.log(x) + 1);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = ' + coefHTML(a, pw(V(), m) + '·ln(' + V() + ')', true) + '</span>',
+      qtext: 'Bestimme f′(x).',
+      fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: 0.4, hi: 2.4 }), _f: f,
+      solHTML: 'f′(' + V() + ') = ' + coefHTML(a, pw(V(), m - 1) + '·(' + m + '·ln(' + V() + ') + 1)', true),
+      steps: [
+        st('u und v', 'u = ' + pw(V(), m) + ' → u′ = ' + coefHTML(m, pw(V(), m - 1), true) + '<br>v = ln(' + V()
+          + ') → v′ = ' + fracHTML(1, V())),
+        st('Produktregel', coefHTML(a * m, (m === 1 ? '' : pw(V(), m - 1) + '·') + 'ln(' + V() + ')', true)
+          + coefHTML(a, pw(V(), m) + '·' + fracHTML(1, V()), false)),
+        st('Zweiter Summand kürzt sich', coefHTML(a, pw(V(), m) + '·' + fracHTML(1, V()), true) + ' = '
+          + coefHTML(a, pw(V(), m - 1), true)),
+        st('Ergebnis', '<b>' + coefHTML(a, pw(V(), m - 1) + '·(' + m + '·ln(' + V() + ') + 1)', true) + '</b>')
+      ]
+    };
+  }
+  /* f = (ax + b)^2 · (x² + k) — Produktregel mit Kette im ersten Faktor */
+  const A = a || 2;
+  const f = x => Math.pow(A * x + b, 2) * (x * x + k);
+  const df = x => 2 * A * (A * x + b) * (x * x + k) + Math.pow(A * x + b, 2) * 2 * x;
+  const L = '(' + polyHTML([A, b]) + ')<sup>2</sup>', R = '(' + polyHTML([1, 0, k]) + ')';
+  return {
+    promptHTML: '<span class="big">f(' + V() + ') = ' + L + ' · ' + R + '</span>',
+    qtext: 'Bestimme f′(x).',
+    fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: 0.3, hi: 2.1 }), _f: f,
+    solHTML: 'f′(' + V() + ') = ' + num(2 * A) + '·(' + polyHTML([A, b]) + ')·' + R + ' + ' + L + '·' + coefHTML(2, V(), true),
+    steps: [
+      st('Zwei Regeln auf einmal', 'Außen die Produktregel — und für u = ' + L + ' braucht man innen die <b>Kettenregel</b>.'),
+      st('u und u′', 'u = ' + L + ' → u′ = 2·(' + polyHTML([A, b]) + ')·' + paren(A) + ' = '
+        + num(2 * A) + '·(' + polyHTML([A, b]) + ')'),
+      st('v und v′', 'v = ' + R + ' → v′ = ' + coefHTML(2, V(), true)),
+      st('Ergebnis', '<b>' + num(2 * A) + '·(' + polyHTML([A, b]) + ')·' + R + ' + ' + L + '·' + coefHTML(2, V(), true) + '</b>')
+    ]
+  };
+});
+
+/* Quotientenregel mit e, ln oder einer Kette im Nenner. */
+harden('ableitung', 'quotient', 5, function (d) {
+  const a = rnz(-4, 4), b = rnz(-6, 6), k = rnz(-3, 3) || 2;
+  const art = pick(d >= 8 ? ['exp', 'ln', 'quad'] : ['exp', 'quad']);
+  if (art === 'exp') {
+    /* f = e^(kx) / (ax + b) — Polstelle und Exponent klein halten, damit die
+       numerische Kontrolle im ganzen Fenster gueltig bleibt */
+    const A = pick([1, 1, 2]);
+    const kk = pick([1, 1, 2, -1, -2]);
+    const pol = -b / A;
+    if (Math.abs(pol) > 3) return null;
+    const lo = pol + 0.6, hi = pol + 1.8;
+    if (Math.abs(kk * hi) > 7 || Math.abs(kk * lo) > 7) return null;
+    const f = x => Math.exp(kk * x) / (A * x + b);
+    const df = x => Math.exp(kk * x) * (kk * (A * x + b) - A) / Math.pow(A * x + b, 2);
+    const N = polyHTML([A, b]), arg = coefHTML(kk, V(), true);
+    const k = kk;
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = ' + fracHTML('e<sup>' + arg + '</sup>', N) + '</span>',
+      qtext: 'Bestimme f′(x).',
+      fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: lo, hi: hi }), _f: f,
+      solHTML: 'f′(' + V() + ') = ' + fracHTML('e<sup>' + arg + '</sup>·(' + num(k) + '·(' + N + ') − ' + paren(A) + ')',
+        '(' + N + ')<sup>2</sup>'),
+      steps: [
+        st('u und v', 'u = e<sup>' + arg + '</sup> → u′ = ' + coefHTML(k, 'e<sup>' + arg + '</sup>', true)
+          + '<br>v = ' + N + ' → v′ = ' + num(A)),
+        st('Quotientenregel', fracHTML('u′v − uv′', 'v²') + ' = '
+          + fracHTML(coefHTML(k, 'e<sup>' + arg + '</sup>', true) + '·(' + N + ') − e<sup>' + arg + '</sup>·' + paren(A),
+            '(' + N + ')<sup>2</sup>')),
+        st('e ausklammern', 'e<sup>' + arg + '</sup> steht in beiden Summanden des Zählers.'),
+        st('Ergebnis', '<b>' + fracHTML('e<sup>' + arg + '</sup>·(' + num(k) + '·(' + N + ') − ' + paren(A) + ')',
+          '(' + N + ')<sup>2</sup>') + '</b>')
+      ]
+    };
+  }
+  if (art === 'ln') {
+    /* f = ln(x) / x^m */
+    const m = ri(1, 2);
+    const f = x => Math.log(x) / Math.pow(x, m);
+    const df = x => (1 - m * Math.log(x)) / Math.pow(x, m + 1);
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = ' + fracHTML('ln(' + V() + ')', pw(V(), m)) + '</span>',
+      qtext: 'Bestimme f′(x).',
+      fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: 0.4, hi: 2.6 }), _f: f,
+      solHTML: 'f′(' + V() + ') = ' + fracHTML('1 − ' + m + '·ln(' + V() + ')', pw(V(), m + 1)),
+      steps: [
+        st('u und v', 'u = ln(' + V() + ') → u′ = ' + fracHTML(1, V()) + '<br>v = ' + pw(V(), m) + ' → v′ = '
+          + coefHTML(m, pw(V(), m - 1), true)),
+        st('Quotientenregel', fracHTML(fracHTML(1, V()) + '·' + pw(V(), m) + ' − ln(' + V() + ')·' + coefHTML(m, pw(V(), m - 1), true),
+          pw(V(), 2 * m))),
+        st('Zähler vereinfachen', pw(V(), m - 1) + '·(1 − ' + m + '·ln(' + V() + '))'),
+        st('Kürzen', 'Ein ' + pw(V(), m - 1) + ' kürzt sich gegen den Nenner heraus.'),
+        st('Ergebnis', '<b>' + fracHTML('1 − ' + m + '·ln(' + V() + ')', pw(V(), m + 1)) + '</b>')
+      ]
+    };
+  }
+  /* f = (ax + b) / (x² + k) mit k > 0 — Nenner ohne Nullstelle */
+  const A = a || 2, K = Math.abs(k) + 1;
+  const f = x => (A * x + b) / (x * x + K);
+  const df = x => (A * (x * x + K) - (A * x + b) * 2 * x) / Math.pow(x * x + K, 2);
+  const Z = polyHTML([A, b]), N = polyHTML([1, 0, K]);
+  return {
+    promptHTML: '<span class="big">f(' + V() + ') = ' + fracHTML(Z, N) + '</span>',
+    qtext: 'Bestimme f′(x).',
+    fields: [Fexpr('f′(<i>x</i>) =')], check: checkExpr(df, { lo: -1.4, hi: 1.9 }), _f: f,
+    solHTML: 'f′(' + V() + ') = ' + fracHTML(polyHTML([-A, -2 * b, A * K]), '(' + N + ')<sup>2</sup>'),
+    steps: [
+      st('u und v', 'u = ' + Z + ' → u′ = ' + num(A) + '<br>v = ' + N + ' → v′ = ' + coefHTML(2, V(), true)),
+      st('Quotientenregel', fracHTML(num(A) + '·(' + N + ') − (' + Z + ')·' + coefHTML(2, V(), true), '(' + N + ')<sup>2</sup>')),
+      st('Zähler ausmultiplizieren', polyHTML([A, 0, A * K]) + ' − (' + polyHTML([2 * A, 2 * b, 0]) + ') = '
+        + polyHTML([-A, -2 * b, A * K])),
+      st('Nenner bleibt stehen', 'Das Quadrat wird <b>nicht</b> ausmultipliziert — so sieht man die Nullstellen der Ableitung besser.'),
+      st('Ergebnis', '<b>' + fracHTML(polyHTML([-A, -2 * b, A * K]), '(' + N + ')<sup>2</sup>') + '</b>')
+    ]
+  };
+});
+
+/* Statt „Tangente an der Stelle x0" die Tangente mit vorgegebener Steigung
+   — die Berührstelle muss erst gefunden werden. */
+harden('ableitung', 'tangente', 5, function (d) {
+  const a = pick([1, 1, 2, -1, -2]), b = rnz(-8, 8), c = rnz(-9, 9);
+  /* f = a x² + b x + c, f′ = 2a x + b = m  →  x0 = (m − b)/(2a) */
+  const x0 = rnz(-5, 5);
+  const m = 2 * a * x0 + b;
+  const y0 = a * x0 * x0 + b * x0 + c;
+  const t = y0 - m * x0;
+  const f = x => a * x * x + b * x + c;
+  return {
+    promptHTML: '<span class="big">f(' + V() + ') = ' + polyHTML([a, b, c]) + '</span>',
+    qtext: 'An welcher Stelle hat der Graph die Steigung <b>' + num(m) + '</b>? Gib auch die Tangente dort an.',
+    fields: [Fnum('<i>x</i><sub>0</sub> =', 'Zahl'), Fnum('<i>m</i> =', 'Steigung'), Fnum('<i>t</i> =', 'y-Achsenabschnitt')],
+    check: checkMulti([x0, m, t]),
+    plot: { fns: [{ f: f, label: 'f' }, { f: x => m * x + t, label: 'Tangente', color: 2 }], points: [{ x: x0, y: y0 }] },
+    solHTML: '<i>x</i><sub>0</sub> = ' + num(x0) + ', y = ' + coefHTML(m, V(), true) + addHTML(t),
+    steps: [
+      st('Umgekehrte Fragerichtung', 'Sonst ist die Stelle gegeben und die Steigung gesucht — hier ist es andersherum. '
+        + 'Also erst f′(x) = ' + num(m) + ' lösen.'),
+      st('Ableitung', 'f′(' + V() + ') = ' + polyHTML([2 * a, b])),
+      st('Gleichung', polyHTML([2 * a, b]) + ' = ' + num(m) + ' → ' + polyHTML([2 * a, 0]) + ' = ' + num(m - b)
+        + ' → <i>x</i><sub>0</sub> = <b>' + num(x0) + '</b>'),
+      st('Berührpunkt', 'f(' + num(x0) + ') = ' + num(y0) + ', also P(' + num(x0) + ' | ' + num(y0) + ')'),
+      st('Tangente', 'y = ' + num(m) + '·(' + V() + ' − ' + paren(x0) + ')' + addHTML(y0) + ' = '
+        + coefHTML(m, V(), true) + addHTML(t))
+    ]
+  };
+});
+
+/* ============================================================
+   ANALYSIS · EXTREMWERTE
+   ============================================================ */
+
+/* Grad 4 statt Grad 3: die Ableitung ist kubisch, muss also erst
+   ausgeklammert oder substituiert werden — und es gibt drei Stellen. */
+harden('extremwert', 'extremstellen', 5, function (d) {
+  const p = ri(1, 6);
+  const q = ri(1, 5);
+  /* f = x⁴ − 2(p²+q²)/2 … einfacher: f' = 4x³ − 4c²x = 4x(x−c)(x+c) */
+  const c = ri(1, 5);
+  const k = rnz(-9, 9);
+  /* f = x⁴ − 2c²x² + k → f′ = 4x³ − 4c²x */
+  const f = x => Math.pow(x, 4) - 2 * c * c * x * x + k;
+  const welche = pick(['links', 'mitte', 'rechts']);
+  const x0 = welche === 'links' ? -c : (welche === 'mitte' ? 0 : c);
+  const art = x0 === 0 ? 'Hochpunkt' : 'Tiefpunkt';
+  return {
+    promptHTML: '<span class="big">f(' + V() + ') = ' + polyHTML([1, 0, -2 * c * c, 0, k]) + '</span>',
+    qtext: 'Der Graph hat <b>drei</b> Extremstellen. Bestimme die '
+      + (welche === 'links' ? 'kleinste' : (welche === 'mitte' ? 'mittlere' : 'größte')) + '.',
+    fields: [Fnum('<i>x</i><sub>0</sub> =', 'Zahl')], check: checkNum(x0),
+    plot: { fns: [{ f: f, label: 'f' }], points: [{ x: x0, y: f(x0) }] },
+    solHTML: '<i>x</i><sub>0</sub> = ' + num(x0) + ' (' + art + ')',
+    steps: [
+      st('Ableitung', 'f′(' + V() + ') = ' + polyHTML([4, 0, -4 * c * c, 0])),
+      st('Nicht die pq-Formel!', 'f′ ist <b>kubisch</b>. Hier wird zuerst ' + coefHTML(4, V(), true)
+        + ' ausgeklammert: ' + coefHTML(4, V(), true) + '·(' + polyHTML([1, 0, -c * c]) + ') = 0'),
+      st('Satz vom Nullprodukt', V() + ' = 0 &nbsp;oder&nbsp; ' + polyHTML([1, 0, -c * c]) + ' = 0 → '
+        + V() + ' = ' + c + ' bzw. ' + V() + ' = ' + num(-c)),
+      st('Drei Stellen', num(-c) + ', 0, ' + c + ' — bei Grad 4 sind bis zu drei Extremstellen möglich.'),
+      st('Die gesuchte', '<b>' + V() + ' = ' + num(x0) + '</b> — dort liegt ein ' + art
+        + '. Mit f′′(' + V() + ') = ' + polyHTML([12, 0, -4 * c * c]) + ' ist f′′(' + num(x0) + ') = '
+        + num(12 * x0 * x0 - 4 * c * c) + (x0 === 0 ? ' &lt; 0' : ' &gt; 0') + '.')
+    ]
+  };
+});
+
+/* Wendestellen bei Grad 4: f'' ist quadratisch → zwei Wendestellen. */
+harden('extremwert', 'wendestelle', 5, function (d) {
+  const a = pick([1, 1, 2, -1]);
+  const s = ri(1, 5), t = rnz(-5, 5);
+  if (s === Math.abs(t)) return null;
+  /* f'' = 12a(x − s)(x − t) → f = a x⁴ − 2a(s+t)x³ + 6a·s·t x² */
+  const c3 = -2 * a * (s + t), c2 = 6 * a * s * t;
+  const c1 = rnz(-6, 6), c0 = rnz(-6, 6);
+  const f = x => a * Math.pow(x, 4) + c3 * Math.pow(x, 3) + c2 * x * x + c1 * x + c0;
+  const gross = Math.max(s, t), klein = Math.min(s, t);
+  const gesucht = coin(0.5) ? klein : gross;
+  return {
+    promptHTML: '<span class="big">f(' + V() + ') = ' + polyHTML([a, c3, c2, c1, c0]) + '</span>',
+    qtext: 'Der Graph hat <b>zwei</b> Wendestellen. Bestimme die ' + (gesucht === klein ? 'kleinere' : 'größere') + '.',
+    fields: [Fnum('<i>x</i><sub>W</sub> =', 'Zahl')], check: checkNum(gesucht),
+    plot: { fns: [{ f: f, label: 'f' }], points: [{ x: gesucht, y: f(gesucht) }] },
+    solHTML: '<i>x</i><sub>W</sub> = ' + num(gesucht),
+    steps: [
+      st('Erste Ableitung', 'f′(' + V() + ') = ' + polyHTML([4 * a, 3 * c3, 2 * c2, c1])),
+      st('Zweite Ableitung', 'f′′(' + V() + ') = ' + polyHTML([12 * a, 6 * c3, 2 * c2])
+        + ' — bei Grad 4 ist f′′ <b>quadratisch</b>, es kann also zwei Wendestellen geben.'),
+      st('Null setzen', polyHTML([12 * a, 6 * c3, 2 * c2]) + ' = 0 &nbsp;|&nbsp; : ' + num(12 * a) + ' → '
+        + polyHTML([1, -(s + t), s * t]) + ' = 0'),
+      st('Lösen (Vieta)', 'Summe ' + num(s + t) + ', Produkt ' + num(s * t) + ' → ' + V() + ' = ' + num(klein)
+        + ' und ' + V() + ' = ' + num(gross)),
+      st('Ergebnis', '<b>' + V() + ' = ' + num(gesucht) + '</b>')
+    ]
+  };
+});
+
+/* ============================================================
+   ANALYSIS · INTEGRALE
+   ============================================================ */
+
+/* Nicht mehr nur Polynome: e-Funktion, 1/x und Wurzeln muessen erst in eine
+   integrierbare Form gebracht werden. */
+harden('integral', 'unbestimmt', 5, function (d) {
+  const a = rnz(-6, 6), b = rnz(-6, 6), k = rnz(-3, 3) || 2;
+  const art = pick(d >= 8 ? ['exp', 'log', 'wurzel', 'gemischt'] : ['exp', 'log', 'wurzel']);
+  if (art === 'exp') {
+    const ref = x => a * Math.exp(k * x) / k + b * x * x / 2;
+    return {
+      promptHTML: intPrompt(coefHTML(a, 'e<sup>' + coefHTML(k, V(), true) + '</sup>', true) + coefHTML(b, V(), false)),
+      qtext: 'Gib eine Stammfunktion an. Das C darf entfallen.',
+      fields: [Fexpr('F(<i>x</i>) =')], check: checkAnti(ref, -0.8, 1.1),
+      solHTML: 'F(' + V() + ') = ' + fracHTML(coefHTML(a, 'e<sup>' + coefHTML(k, V(), true) + '</sup>', true), num(k))
+        + coefHTML(b / 2, V() + '<sup>2</sup>', false),
+      steps: [
+        st('Summandenweise', 'Ein Integral einer Summe ist die Summe der Integrale.'),
+        st('e-Funktion', '∫e<sup>' + coefHTML(k, V(), true) + '</sup> d' + V() + ' = ' + fracHTML(1, num(k))
+          + '·e<sup>' + coefHTML(k, V(), true) + '</sup> — der Faktor ' + fracHTML(1, num(k))
+          + ' gleicht die innere Ableitung aus.'),
+        st('Linearer Teil', '∫' + coefHTML(b, V(), true) + ' d' + V() + ' = ' + coefHTML(b / 2, V() + '<sup>2</sup>', true)),
+        st('Ergebnis', '<b>' + fracHTML(coefHTML(a, 'e<sup>' + coefHTML(k, V(), true) + '</sup>', true), num(k))
+          + coefHTML(b / 2, V() + '<sup>2</sup>', false) + '</b> + C')
+      ]
+    };
+  }
+  if (art === 'log') {
+    /* ∫ (a/x + b x²) dx — die Potenzregel versagt bei x^(−1) */
+    const ref = x => a * Math.log(Math.abs(x)) + b * x * x * x / 3;
+    return {
+      promptHTML: intPrompt(fracHTML(num(a), V()) + coefHTML(b, V() + '<sup>2</sup>', false)),
+      qtext: 'Gib eine Stammfunktion an. Das C darf entfallen.',
+      fields: [Fexpr('F(<i>x</i>) =', 'z. B. 3*ln(x) + x^3')], check: checkAnti(ref, 0.5, 2.2),
+      solHTML: 'F(' + V() + ') = ' + coefHTML(a, 'ln|' + V() + '|', true) + coefHTML(b / 3, V() + '<sup>3</sup>', false),
+      steps: [
+        st('Die Ausnahme der Potenzregel', fracHTML(num(a), V()) + ' = ' + coefHTML(a, V() + '<sup>−1</sup>', true)
+          + '. Die Potenzregel würde durch den Exponenten −1 + 1 = 0 <b>teilen</b> — deshalb gibt es hier eine eigene Regel.'),
+        st('Die Regel', '∫' + fracHTML(1, V()) + ' d' + V() + ' = ln|' + V() + '|'),
+        st('Der zweite Summand', '∫' + coefHTML(b, V() + '<sup>2</sup>', true) + ' d' + V() + ' = '
+          + coefHTML(b / 3, V() + '<sup>3</sup>', true)),
+        st('Ergebnis', '<b>' + coefHTML(a, 'ln|' + V() + '|', true) + coefHTML(b / 3, V() + '<sup>3</sup>', false) + '</b> + C')
+      ]
+    };
+  }
+  if (art === 'wurzel') {
+    /* ∫ a·√x dx = (2a/3)·x^(3/2) */
+    const ref = x => 2 * a * Math.pow(x, 1.5) / 3 + b * x;
+    return {
+      promptHTML: intPrompt(coefHTML(a, sqrtHTML(V()), true) + coefHTML(b, '', false)),
+      qtext: 'Gib eine Stammfunktion an. Das C darf entfallen.',
+      fields: [Fexpr('F(<i>x</i>) =', 'z. B. 2/3*x^(3/2)')], check: checkAnti(ref, 0.4, 2.2),
+      solHTML: 'F(' + V() + ') = ' + fracHTML(num(2 * a), 3) + '·' + V() + '<sup>3/2</sup>' + coefHTML(b, V(), false),
+      steps: [
+        st('Wurzel als Potenz', sqrtHTML(V()) + ' = ' + V() + '<sup>1/2</sup> — erst dann greift die Potenzregel.'),
+        st('Potenzregel', 'Exponent um 1 erhöhen: ' + fracHTML(1, 2) + ' + 1 = ' + fracHTML(3, 2)
+          + ', dann durch den neuen Exponenten teilen — das heißt <b>mal</b> ' + fracHTML(2, 3) + '.'),
+        st('Konstante', '∫' + num(b) + ' d' + V() + ' = ' + coefHTML(b, V(), true)),
+        st('Ergebnis', '<b>' + fracHTML(num(2 * a), 3) + '·' + V() + '<sup>3/2</sup>' + coefHTML(b, V(), false) + '</b> + C')
+      ]
+    };
+  }
+  /* ∫ (ax + b)^n dx mit Kette */
+  const n = ri(2, 4), A = a || 2;
+  const ref = x => Math.pow(A * x + b, n + 1) / (A * (n + 1));
+  return {
+    promptHTML: intPrompt('(' + polyHTML([A, b]) + ')<sup>' + n + '</sup>'),
+    qtext: 'Gib eine Stammfunktion an. Das C darf entfallen.',
+    fields: [Fexpr('F(<i>x</i>) =')], check: checkAnti(ref, 0.2, 1.6),
+    solHTML: 'F(' + V() + ') = ' + fracHTML('(' + polyHTML([A, b]) + ')<sup>' + (n + 1) + '</sup>', num(A * (n + 1))),
+    steps: [
+      st('Nicht ausmultiplizieren', 'Man könnte die Klammer hoch ' + n + ' ausrechnen — mit der linearen Substitution '
+        + 'geht es in einer Zeile.'),
+      st('Potenzregel für die Klammer', fracHTML('(' + polyHTML([A, b]) + ')<sup>' + (n + 1) + '</sup>', n + 1)),
+      st('Korrekturfaktor', 'Die innere Ableitung ist ' + num(A) + ', also noch mit ' + fracHTML(1, num(A)) + ' multiplizieren.'),
+      st('Ergebnis', '<b>' + fracHTML('(' + polyHTML([A, b]) + ')<sup>' + (n + 1) + '</sup>', num(A * (n + 1))) + '</b> + C')
+    ]
+  };
+});
+
+/* Die Fläche zwischen zwei Kurven — die Grenzen muessen erst als
+   Schnittstellen bestimmt werden. */
+harden('integral', 'flaeche', 5, function (d) {
+  const r1 = rnz(-6, 4);
+  const w = ri(2, d <= 7 ? 4 : 6);
+  const r2 = r1 + w;
+  /* a so waehlen, dass |a|·w³/6 glatt aufgeht — sonst ist die Flaeche krumm */
+  const a = (6 / gcd(w * w * w, 6)) * pick([1, 1, 2]);
+  if (a > 6) return null;
+  if (d >= 8 && coin(0.45)) {
+    /* Fläche mit Vorzeichenwechsel: zwei Teilintegrale */
+    const n = ri(1, 4);
+    /* f = a·x·(x − n) hat Nullstellen 0 und n; Intervall [−m, n] */
+    const m = ri(1, 3);
+    if ((a * (2 * n * n * n + 2 * m * m * m + 3 * n * m * m)) % 6 !== 0) return null;
+    const f = x => a * x * (x - n);
+    const St = x => a * (x * x * x / 3 - n * x * x / 2);
+    const A1 = Math.abs(St(0) - St(-m)), A2 = Math.abs(St(n) - St(0));
+    const area = A1 + A2;
+    if (!isNice(area, 900)) return null;
+    return {
+      promptHTML: '<span class="big">f(' + V() + ') = ' + polyHTML([a, -a * n, 0]) + '</span>',
+      qtext: 'Welche Fläche schließt der Graph mit der x-Achse über [' + num(-m) + '; ' + n + '] ein?',
+      fields: [Fnum('A =', 'Flächeninhalt')], check: checkNum(area, 1e-5), solHTML: 'A = ' + valHTML(area),
+      plot: { fns: [{ f: f }], hlines: [{ y: 0 }], regions: [{ from: -m, to: 0 }, { from: 0, to: n }] },
+      steps: [
+        st('Zuerst die Nullstellen', polyHTML([a, -a * n, 0]) + ' = 0 → ' + V() + ' = 0 und ' + V() + ' = ' + n
+          + '. Die Nullstelle 0 liegt <b>im</b> Intervall.'),
+        st('Warum das wichtig ist', 'Links von 0 liegt der Graph über der Achse, rechts darunter. Ein einziges Integral '
+          + 'über [' + num(-m) + '; ' + n + '] würde die Flächen <b>gegeneinander verrechnen</b>.'),
+        st('Stammfunktion', 'F(' + V() + ') = ' + termsHTML([{ c: new F(a, 3), b: xpow(3) }, { c: new F(-a * n, 2), b: xpow(2) }])),
+        st('Erstes Teilstück', '|F(0) − F(' + num(-m) + ')| = ' + valHTML(A1)),
+        st('Zweites Teilstück', '|F(' + n + ') − F(0)| = ' + valHTML(A2)),
+        st('Addieren', valHTML(A1) + ' + ' + valHTML(A2) + ' = <b>' + valHTML(area) + '</b>')
+      ]
+    };
+  }
+  /* Fläche zwischen Parabel und Gerade */
+  const mg = rnz(-5, 5), tg = rnz(-9, 9);
+  /* f(x) − g(x) = −a(x − r1)(x − r2) */
+  const diffCo = [-a, a * (r1 + r2), -a * r1 * r2];
+  const fco = [diffCo[0], diffCo[1] + mg, diffCo[2] + tg];
+  const area = Math.abs(a) * Math.pow(r2 - r1, 3) / 6;
+  if (!isNice(area, 900)) return null;
+  const f = x => fco[0] * x * x + fco[1] * x + fco[2];
+  const g = x => mg * x + tg;
+  return {
+    promptHTML: '<span class="big">f(' + V() + ') = ' + polyHTML(fco) + '<br>g(' + V() + ') = ' + polyHTML([mg, tg]) + '</span>',
+    qtext: 'Welche Fläche schließen die beiden Graphen ein?',
+    fields: [Fnum('A =', 'Flächeninhalt')], check: checkNum(area, 1e-5), solHTML: 'A = ' + valHTML(area),
+    plot: {
+      fns: [{ f: f, label: 'f' }, { f: g, label: 'g', color: 2 }],
+      points: [{ x: r1, y: g(r1) }, { x: r2, y: g(r2) }]
+    },
+    steps: [
+      st('Die Grenzen stehen nicht da', 'Sie sind die <b>Schnittstellen</b> — deshalb zuerst f(x) = g(x) lösen.'),
+      st('Gleichsetzen', polyHTML(fco) + ' = ' + polyHTML([mg, tg]) + ' → ' + polyHTML(diffCo) + ' = 0'),
+      st('Schnittstellen', V() + '<sub>1</sub> = ' + num(r1) + ', ' + V() + '<sub>2</sub> = ' + num(r2)),
+      st('Differenzfunktion integrieren', 'A = |∫<sub>' + num(r1) + '</sub><sup>' + num(r2) + '</sup> (f(x) − g(x)) dx| '
+        + '— welche Funktion oben liegt, spielt wegen des Betrags keine Rolle.'),
+      st('Ergebnis', 'A = <b>' + valHTML(area) + '</b>'
+        + '<br><span class="muted">Abkürzung: A = ' + fracHTML('|a|·(x₂ − x₁)³', '6') + ' = '
+        + fracHTML(Math.abs(a) + '·' + (r2 - r1) + '³', '6') + '</span>')
+    ]
+  };
+});
+
+/* ============================================================
+   ANALYSIS · FOLGEN
+   ============================================================ */
+
+/* Nicht das nächste Glied, sondern die Folge selbst: aus zwei Gliedern
+   müssen erst a₁ und d bzw. q bestimmt werden. */
+harden('folgen', 'arith', 5, function (d) {
+  const a1 = rnz(-20, 20), dd = rnz(-9, 9);
+  const i = ri(2, 6), j = i + ri(2, 8);
+  const ai = a1 + (i - 1) * dd, aj = a1 + (j - 1) * dd;
+  const n = ri(j + 2, j + 20);
+  const an = a1 + (n - 1) * dd;
+  if (Math.abs(an) > 900) return null;
+  return {
+    promptHTML: '<span class="big">Eine arithmetische Folge hat<br>a<sub>' + i + '</sub> = ' + num(ai)
+      + ' &nbsp;und&nbsp; a<sub>' + j + '</sub> = ' + num(aj) + '</span>', mid: true,
+    qtext: 'Bestimme a<sub>' + n + '</sub>.',
+    fields: [Fnum('a<sub>' + n + '</sub> =', 'Zahl')], check: checkNum(an),
+    solHTML: 'a<sub>' + n + '</sub> = ' + num(an),
+    steps: [
+      st('Was fehlt?', 'Weder a<sub>1</sub> noch die Differenz d sind gegeben — beide müssen erst aus den zwei '
+        + 'bekannten Gliedern gewonnen werden.'),
+      st('Differenz bestimmen', 'Von a<sub>' + i + '</sub> bis a<sub>' + j + '</sub> sind es ' + (j - i)
+        + ' Schritte: d = ' + fracHTML(num(aj) + ' − ' + paren(ai), j - i) + ' = ' + fracHTML(num(aj - ai), j - i)
+        + ' = ' + num(dd)),
+      st('Erstes Glied', 'a<sub>1</sub> = a<sub>' + i + '</sub> − ' + (i - 1) + '·d = ' + num(ai) + ' − '
+        + (i - 1) + '·' + paren(dd) + ' = ' + num(a1)),
+      st('Explizite Formel', 'a<sub>n</sub> = ' + num(a1) + ' + (n − 1)·' + paren(dd)),
+      st('Einsetzen', 'a<sub>' + n + '</sub> = ' + num(a1) + ' + ' + (n - 1) + '·' + paren(dd) + ' = <b>' + num(an) + '</b>')
+    ]
+  };
+});
+
+/* Rückwärts: wie viele Glieder braucht man für eine vorgegebene Summe? */
+harden('folgen', 'sumArith', 5, function (d) {
+  const a1 = rnz(-12, 12), dd = rnz(1, 6) * (coin(0.7) ? 1 : -1);
+  const n = ri(5, d <= 7 ? 14 : 25);
+  const S = n * (2 * a1 + (n - 1) * dd) / 2;
+  if (!Number.isInteger(S) || Math.abs(S) > 5000) return null;
+  const an = a1 + (n - 1) * dd;
+  return {
+    promptHTML: '<span class="big">Eine arithmetische Folge beginnt mit a<sub>1</sub> = ' + num(a1)
+      + ' und hat die Differenz d = ' + num(dd) + '.</span>', mid: true,
+    qtext: 'Nach wie vielen Gliedern erreicht die Summe genau ' + num(S) + '?',
+    fields: [Fnum('n =', 'ganze Zahl')], check: checkNum(n), solHTML: 'n = ' + n,
+    steps: [
+      st('Umgekehrte Fragerichtung', 'Sonst ist n gegeben und S gesucht — hier ist S gegeben und <b>n</b> gesucht. '
+        + 'Aus der Summenformel wird dadurch eine quadratische Gleichung.'),
+      st('Summenformel', 'S<sub>n</sub> = ' + fracHTML('n', '2') + '·(2a<sub>1</sub> + (n − 1)·d)'),
+      st('Einsetzen', fracHTML('n', '2') + '·(' + num(2 * a1) + ' + (n − 1)·' + paren(dd) + ') = ' + num(S)),
+      st('Ordnen', coefHTML(dd, 'n²', true) + coefHTML(2 * a1 - dd, 'n', false) + coefHTML(-2 * S, '', false) + ' = 0'),
+      st('Lösen', 'Die negative Lösung entfällt (n ist eine Anzahl) → <b>n = ' + n + '</b>'),
+      st('Probe', 'a<sub>' + n + '</sub> = ' + num(an) + ', S<sub>' + n + '</sub> = '
+        + fracHTML(n, 2) + '·(' + num(a1) + ' + ' + paren(an) + ') = ' + num(S) + ' ✓')
+    ]
+  };
+});
+
+/* Geometrisch: q aus zwei Gliedern — und die Wurzel darf nicht vergessen werden. */
+harden('folgen', 'geo', 5, function (d) {
+  const q = pick([2, 3, -2, new F(1, 2), new F(1, 3), new F(3, 2), new F(-1, 2)]);
+  const qf = F.of(q);
+  const a1 = rnz(-6, 6) * pick([1, 1, 2, 3]);
+  const i = ri(1, 3), j = i + 2;
+  const ai = F.of(a1).mul(qf.pow(i - 1)), aj = F.of(a1).mul(qf.pow(j - 1));
+  if (ai.d > 8 || aj.d > 30) return null;
+  const n = ri(j + 1, j + 4);
+  const an = F.of(a1).mul(qf.pow(n - 1));
+  if (an.d > 400 || Math.abs(an.v) > 4000) return null;
+  const q2 = aj.div(ai);
+  return {
+    promptHTML: '<span class="big">Eine geometrische Folge hat<br>a<sub>' + i + '</sub> = ' + ai.html()
+      + ' &nbsp;und&nbsp; a<sub>' + j + '</sub> = ' + aj.html() + '</span>', mid: true,
+    qtext: 'Bestimme a<sub>' + n + '</sub>. (Es gilt q ' + (qf.v < 0 ? '&lt;' : '&gt;') + ' 0.)',
+    fields: [Fnum('a<sub>' + n + '</sub> =', P_PH)], check: checkNum(an.v), solHTML: 'a<sub>' + n + '</sub> = ' + an.html(),
+    steps: [
+      st('Zwei Glieder, zwei Unbekannte', 'Gesucht sind a<sub>1</sub> und q — beide stecken in den zwei Angaben.'),
+      st('Quotient bilden', fracHTML('a<sub>' + j + '</sub>', 'a<sub>' + i + '</sub>') + ' = q<sup>' + (j - i)
+        + '</sup> = ' + q2.html() + ' — die a<sub>1</sub> kürzen sich weg.'),
+      st('Wurzel ziehen', 'q<sup>2</sup> = ' + q2.html() + ' → q = ' + qf.html()
+        + '<br><span class="muted">Bei geradem Exponenten gibt es zwei Vorzeichen — deshalb steht in der Aufgabe, welches gemeint ist.</span>'),
+      st('Erstes Glied', 'a<sub>1</sub> = ' + fracHTML('a<sub>' + i + '</sub>', 'q<sup>' + (i - 1) + '</sup>')
+        + ' = ' + F.of(a1).html()),
+      st('Ergebnis', 'a<sub>' + n + '</sub> = ' + F.of(a1).html() + '·' + parenH(qf.html()) + '<sup>' + (n - 1)
+        + '</sup> = <b>' + an.html() + '</b>')
+    ]
+  };
+});
+
+/* ============================================================
+   IMPLIZITES ABLEITEN
+   ============================================================ */
+
+/* Der verschobene Kegelschnitt: jetzt stehen auch lineare Terme da, und die
+   Steigung wird an einem konkreten Punkt gefragt. */
+harden('implizit', 'kreis', 5, function (d) {
+  const a = ri(1, 4), b = ri(1, 4);
+  const p = rnz(-6, 6), q = rnz(-6, 6);
+  const ref = (x, y) => -(2 * a * x + p) / (2 * b * y + q);
+  const terms = [[a, 2, 0], [b, 0, 2], [p, 1, 0], [q, 0, 1]];
+  const k = ri(4, 60);
+  return {
+    promptHTML: '<span class="big">' + fxyHTML(terms) + ' = ' + k + '</span>',
+    qtext: 'Bestimme ' + Y() + '′ mit implizitem Ableiten.',
+    fields: [Fexpr(Y() + '′ =', 'z. B. -(2x+3)/(4y-1)')], check: checkExpr2(ref, { lo: 0.6, hi: 2.4 }),
+    solHTML: Y() + '′ = ' + fracHTML(fxyHTML([[-2 * a, 1, 0], [-p, 0, 0]]), fxyHTML([[2 * b, 0, 1], [q, 0, 0]])),
+    steps: [
+      st('Jeder Term einzeln', 'Nach x ableiten und dabei y als Funktion von x behandeln — bei jedem y kommt nach der '
+        + 'Kettenregel ein ' + Y() + '′ dazu.'),
+      st('Term für Term', '(' + monoXY(a, 2, 0, true) + ')′ = ' + fxyHTML([[2 * a, 1, 0]])
+        + '<br>(' + monoXY(b, 0, 2, true) + ')′ = ' + num(2 * b) + Y() + '·' + Y() + '′'
+        + '<br>(' + monoXY(p, 1, 0, true) + ')′ = ' + num(p)
+        + '<br>(' + monoXY(q, 0, 1, true) + ')′ = ' + coefHTML(q, Y() + '′', true)),
+      st('Alles zusammen', fxyHTML([[2 * a, 1, 0], [p, 0, 0]]) + ' + (' + fxyHTML([[2 * b, 0, 1], [q, 0, 0]])
+        + ')·' + Y() + '′ = 0'),
+      st('Nach ' + Y() + '′ auflösen', Y() + '′ = ' + fracHTML(MINUS + '(' + fxyHTML([[2 * a, 1, 0], [p, 0, 0]]) + ')',
+        fxyHTML([[2 * b, 0, 1], [q, 0, 0]]))),
+      st('Ergebnis', '<b>' + Y() + '′ = ' + fracHTML(fxyHTML([[-2 * a, 1, 0], [-p, 0, 0]]),
+        fxyHTML([[2 * b, 0, 1], [q, 0, 0]])) + '</b>'
+        + '<br><span class="muted">Anders als bei y = f(x) steht in der Ableitung wieder ein y — das ist normal.</span>')
+    ]
+  };
+});
+
+/* ============================================================
+   ELASTIZITÄTEN
+   ============================================================ */
+
+/* Nicht mehr eine Stelle einsetzen, sondern die Stelle suchen, an der die
+   Nachfrage gerade proportional (|ε| = 1) reagiert — oder den Erlös. */
+harden('elastizitaet', 'linear', 5, function (d) {
+  const a = ri(1, 6), b = 2 * a * ri(2, 9);
+  if (d >= 8 && coin(0.45)) {
+    /* Erlös E(x) = x·p(x), Elastizität des Erlöses */
+    const x0 = ri(1, Math.floor(b / a) - 1);
+    const eps = 1 + (-a * x0) / (b - a * x0);
+    if (!isNice(eps)) return null;
+    return {
+      promptHTML: '<span class="big">p(' + V() + ') = ' + num(b) + ' <span class="op">−</span> ' + coefHTML(a, V(), true) + '</span>',
+      qtext: 'Wie elastisch ist der <b>Erlös</b> E(' + V() + ') = ' + V() + '·p(' + V() + ') an der Stelle ' + V() + ' = ' + x0 + '?',
+      fields: [Fnum('ε<sub>E</sub> =', P_PH)], check: checkNum(eps, 1e-4), solHTML: 'ε<sub>E</sub> = ' + valHTML(eps),
+      steps: [
+        st('Erlösfunktion aufstellen', 'E(' + V() + ') = ' + V() + '·(' + num(b) + ' − ' + coefHTML(a, V(), true) + ') = '
+          + polyHTML([-a, b, 0])),
+        st('Der kurze Weg', 'Die Elastizität eines <b>Produkts</b> ist die <b>Summe</b> der Elastizitäten: '
+          + 'ε<sub>E</sub> = ε<sub>x</sub> + ε<sub>p</sub> = 1 + ε<sub>p</sub>.'),
+        st('ε der Nachfrage', 'ε<sub>p</sub> = ' + fracHTML(num(-a * x0), num(b - a * x0)) + ' = ' + valHTML(eps - 1)),
+        st('Ergebnis', 'ε<sub>E</sub> = 1 ' + (eps - 1 < 0 ? '− ' + valHTML(1 - eps) : '+ ' + valHTML(eps - 1))
+          + ' = <b>' + valHTML(eps) + '</b>')
+      ]
+    };
+  }
+  /* Stelle mit |ε| = 1 suchen */
+  const x1 = b / (2 * a);
+  return {
+    promptHTML: '<span class="big">p(' + V() + ') = ' + num(b) + ' <span class="op">−</span> ' + coefHTML(a, V(), true) + '</span>',
+    qtext: 'An welcher Stelle reagiert die Nachfrage <b>proportional</b>, also |ε| = 1?',
+    fields: [Fnum('<i>x</i> =', 'Zahl')], check: checkNum(x1), solHTML: V() + ' = ' + x1,
+    plot: { fns: [{ f: x => b - a * x, label: 'p(x)' }], points: [{ x: x1, y: b - a * x1 }] },
+    steps: [
+      st('Umgekehrte Fragerichtung', 'Sonst ist die Stelle gegeben und ε gesucht — hier ist ε gegeben und die '
+        + '<b>Stelle</b> gesucht. Aus der Formel wird eine Gleichung.'),
+      st('Formel ansetzen', 'ε(' + V() + ') = ' + fracHTML(coefHTML(-a, V(), true), num(b) + ' − ' + coefHTML(a, V(), true))),
+      st('|ε| = 1 bedeutet', coefHTML(a, V(), true) + ' = ' + num(b) + ' − ' + coefHTML(a, V(), true)
+        + ' &nbsp;(der Betrag macht aus dem Minus ein Plus)'),
+      st('Auflösen', coefHTML(2 * a, V(), true) + ' = ' + num(b) + ' → ' + V() + ' = ' + fracHTML(b, 2 * a)
+        + ' = <b>' + x1 + '</b>'),
+      st('Merke', 'Bei linearer Nachfrage liegt diese Stelle immer <b>in der Mitte</b> zwischen 0 und der Sättigungsmenge '
+        + fracHTML(b, a) + ' = ' + (b / a) + ' — dort ist der Erlös maximal.')
+    ]
+  };
+});
+
+</script>
+<script>
+/* ============================================================
    TEIL 4 — Kurzfassungen: knappe Themen- und Typbeschreibungen
    ============================================================ */
 
@@ -7503,6 +10473,8 @@ function dropHover(btn) {
 function railBtn(cls, icoHTML, name, onClick, chev) {
   const b = el('button', 'railbtn' + (cls ? ' ' + cls : ''));
   b.title = name;
+  b.setAttribute('aria-label', name);
+  if (/\bon\b/.test(cls || '')) b.setAttribute('aria-current', 'true');
   b.innerHTML = '<span class="ic">' + icoHTML + '</span><span class="nm">' + name + '</span>'
     + (chev ? '<svg class="chev"><use href="#i-chev"/></svg>' : '');
   b.onclick = e => { dropHover(b); onClick(e); };
@@ -7784,6 +10756,9 @@ function newTask() {
   $('stage').className = 'stage' + (task.wordy ? ' wordy' : (task.mid ? ' mid' : ''));
   $('prompt').innerHTML = task.promptHTML;
   paintOps($('prompt'));
+  /* Fuer Screenreader eine gesprochene Fassung hinterlegen — die gesetzte
+     Formel selbst waere sonst unverstaendlich. */
+  $('stage').setAttribute('aria-label', 'Aufgabe: ' + srText($('prompt')));
   setFb(null);
   $('btnCheck').disabled = false;
   buildAnswer();
@@ -7820,6 +10795,7 @@ function buildAnswer() {
         const inp = track(el('input', 'inp'));
         inp.placeholder = 'x' + ['₁', '₂', '₃', '₄', '₅'][k];
         inp.autocomplete = 'off'; inp.spellcheck = false;
+        inp.setAttribute('aria-label', 'Lösung ' + (k + 1));
         row.appendChild(inp); inputs.push(inp);
       }
       wrap.appendChild(row); box.appendChild(wrap);
@@ -7835,6 +10811,7 @@ function buildAnswer() {
       for (let r = 0; r < f.rows; r++) for (let c = 0; c < f.cols; c++) {
         const inp = track(el('input', 'inp'));
         inp.autocomplete = 'off'; inp.spellcheck = false; inp.placeholder = '';
+        inp.setAttribute('aria-label', 'Zeile ' + (r + 1) + ', Spalte ' + (c + 1));
         grid.appendChild(inp); cells.push(inp);
       }
       m.appendChild(grid);
@@ -7885,6 +10862,7 @@ function buildAnswer() {
       if (lab !== '=') wrap.appendChild(el('div', 'setlab', lab));
       const inp = track(el('input', 'inp'));
       inp.placeholder = f.ph || ''; inp.autocomplete = 'off'; inp.spellcheck = false;
+      inp.setAttribute('aria-label', srPlain(lab === '=' ? 'Antwort' : lab));
       wrap.appendChild(inp); box.appendChild(wrap);
       state.getters.push(() => inp.value);
     }
@@ -8031,6 +11009,11 @@ function setLvlColor(d) {
   /* Der Knopf ist 15 px breit: seine Mitte laeuft von 7.5 px bis Breite − 7.5 px,
      sonst haengt er an den Enden ueber die − / + Tasten hinaus. */
   const pos = 'calc(' + pct + '% + ' + (7.5 - pct * 0.15).toFixed(3) + 'px)';
+  const rng = $('diff');
+  if (rng) {
+    rng.setAttribute('aria-label', 'Schwierigkeitsstufe');
+    rng.setAttribute('aria-valuetext', d + ' von 10 — ' + DIFF_TXT[d - 1]);
+  }
   const fill = $('lvlFill'), knob = $('lvlKnob'), val = $('lvlVal');
   if (fill) fill.style.width = pos;
   if (knob) knob.style.left = pos;
@@ -8048,6 +11031,8 @@ function setLvlColor(d) {
 function setFb(kind, html, chip) {
   const fb = $('fb');
   fb.className = 'fb' + (kind ? ' ' + kind + ' show' : '');
+  fb.setAttribute('role', 'status');
+  fb.setAttribute('aria-live', 'polite');
   const mark = kind === 'good' ? '<svg class="fbic" viewBox="0 0 24 24"><path d="M4.6 12.6l4.8 4.8L19.4 7.2"/></svg>'
     : (kind === 'bad' ? '<svg class="fbic" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg>' : '');
   fb.innerHTML = kind ? (mark + '<span class="msg">' + html + '</span>'
@@ -8950,6 +11935,72 @@ window.addEventListener('resize', redraw);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveTabInd(true));
 window.addEventListener('load', () => moveTabInd(true));
 
+
+
+/* ============================================================
+   VORLESBARE FASSUNG
+   ============================================================
+   Screenreader lesen gesetzte Mathematik sonst als Zeichensalat vor:
+   aus einem Bruch wird „12" statt „1 durch 2". Diese Funktion uebersetzt
+   die gerenderte Formel in einen gesprochenen Satz. */
+const SR_SIGN = [
+  ['\u2212', ' minus '], ['-', ' minus '], ['+', ' plus '], ['\u00b7', ' mal '], ['\u00d7', ' mal '],
+  ['\u00f7', ' geteilt durch '], ['=', ' gleich '], ['\u2260', ' ungleich '],
+  ['\u2264', ' kleiner gleich '], ['\u2265', ' groesser gleich '], ['<', ' kleiner '], ['>', ' groesser '],
+  ['\u221e', ' unendlich '], ['\u2192', ' geht gegen '], ['\u2211', ' Summe '], ['\u220f', ' Produkt '],
+  ['\u222b', ' Integral '], ['\u2202', ' partiell '], ['\u2207', ' Gradient '], ['\u03bb', ' Lambda '],
+  ['\u211d', ' reelle Zahlen '], ['\u2208', ' Element von '], ['\u2229', ' geschnitten '], ['\u222a', ' vereinigt ']
+];
+function srWalk(node) {
+  if (node.nodeType === 3) {
+    let t = node.nodeValue;
+    SR_SIGN.forEach(p => { t = t.split(p[0]).join(p[1]); });
+    return t;
+  }
+  if (node.nodeType !== 1) return '';
+  const el = node, cl = el.classList;
+  if (el.tagName.toLowerCase() === 'svg') return el.getAttribute('data-sr') || '';
+  if (cl.contains('frac')) {
+    const n = el.querySelector(':scope > .fn'), d = el.querySelector(':scope > .fd');
+    return ' ( ' + srKids(n) + ' ) durch ( ' + srKids(d) + ' ) ';
+  }
+  if (cl.contains('rt')) {
+    const c = el.querySelector(':scope > .rtc'), idx = el.querySelector(':scope > .rti');
+    return idx ? ' ' + srKids(idx) + '-te Wurzel aus ( ' + srKids(c) + ' ) ' : ' Wurzel aus ( ' + srKids(c) + ' ) ';
+  }
+  if (cl.contains('bars')) return ' Betrag von ( ' + srKids(el) + ' ) ';
+  if (cl.contains('mat') || cl.contains('matin')) return ' Matrix ' + srKids(el) + ' ';
+  if (cl.contains('mgrid')) {
+    /* Eintraege einzeln vorlesen und am Zeilenende eine Pause setzen —
+       sonst verschmelzen die Zahlen zu einer einzigen. */
+    const m = /repeat\((\d+)/.exec(el.style.gridTemplateColumns || '');
+    const cols = m ? +m[1] : 0;
+    const cells = [];
+    for (let c = el.firstChild; c; c = c.nextSibling) cells.push(srWalk(c).trim());
+    return ' ' + cells.map((t, i) => t + (i + 1 === cells.length ? ''
+      : (cols && (i + 1) % cols === 0 ? '; ' : ', '))).join('') + ' ';
+  }
+  if (cl.contains('binom')) return ' ' + srKids(el).replace(/\s+/g, ' über ') + ' ';
+  if (el.tagName === 'SUP') return ' hoch ' + srKids(el) + ' ';
+  if (el.tagName === 'SUB') return ' Index ' + srKids(el) + ' ';
+  if (el.tagName === 'BR') return '. ';
+  if (el.tagName === 'TR') return srKids(el) + '. ';
+  if (el.tagName === 'TD' || el.tagName === 'TH') return srKids(el) + ', ';
+  return srKids(el);
+}
+function srKids(el) {
+  if (!el) return '';
+  let out = '';
+  for (let c = el.firstChild; c; c = c.nextSibling) out += srWalk(c);
+  return out;
+}
+function srText(el) { return srKids(el).replace(/\s+/g, ' ').trim(); }
+/* HTML-Schnipsel (z. B. Feldbeschriftungen) in reinen Text */
+function srPlain(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return srText(d);
+}
 
 /* ============================================================
    TON
